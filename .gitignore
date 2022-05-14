@@ -1,0 +1,5 @@
+discordauth.json
+vendorauth.json
+.git/
+.github/
+node_modules
