@@ -6,21 +6,25 @@ import 'dotenv/config';
 import {Client, Collection, Intents} from 'discord.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import Glob from 'glob'
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 client.commands = new Collection();
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+const commandGlob = Glob.sync('commands' + '/**/*');
+const commandFiles = commandGlob.filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	
-	var command = await import(`./commands/${file}`);
-	var command = await command.create();
+	var command = await import(`./${file}`);
+	try {
+		command = await command.create();
+	} catch (error) {
+		console.log(error);
+	}
 	(async () => {
 		try {
-			//client.commands.set(command.data.name, command);
 			client.commands.set(command.data.name, command);
 			console.log("Created commands");
 		} catch (error) {
@@ -50,5 +54,4 @@ client.on('interactionCreate', async interaction => {
 	}
 });
 
-// Login to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
