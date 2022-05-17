@@ -53,6 +53,19 @@ export const TEST_COMMAND = {
   type: 1,
 };
 
+// Suggest feature to Trello board commands
+export const SUGGEST_COMMAND = {
+    name: 'suggest',
+    description: 'Submits a suggestion card to Trello',
+    type: 1,
+}
+
+export const DEFINE_COMMAND = {
+    name: 'define',
+    description: 'Queries Urban Dictionary for a definition to a provided arg',
+    type: 1,
+}
+
 // Command containing options
 /* export const CHALLENGE_COMMAND = {
   name: 'challenge',
