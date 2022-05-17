@@ -13,7 +13,7 @@ const execute = async function execute(interaction) {
         },
         method: 'GET',
         hostname: 'www.googleapis.com',
-        path: `/youtube/v3/search?${params}&${process.env.vetoKey}`
+        path: `/youtube/v3/channels?${params}&${process.env.vetoKey}`
     }
     const response = await callApi(options);
     const videoNames = [];

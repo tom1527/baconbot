@@ -21,7 +21,6 @@ for (const file of commandFiles) {
 	(async () => {
 		try {
 			//client.commands.set(command.data.name, command);
-			console.log(command);
 			client.commands.set(command.data.name, command);
 			console.log("Created commands");
 		} catch (error) {
