@@ -13,6 +13,9 @@ const commandFiles = commandGlob.filter(file => file.endsWith('.js'));
 
 const commands = [];
 for (const file of commandFiles) {
+	if (file.includes('commands/bot/')) {
+		continue;
+	}
 	const command = await import(`./${file}`);
 	try { 
 		const commandObject = await command.create();
