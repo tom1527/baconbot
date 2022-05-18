@@ -1,22 +1,26 @@
-// const fs = require('node:fs');
+#!/usr/bin/env node 
 import *  as fs from 'fs';
-// const path = require('node:path');
 import * as path from 'path';
 import 'dotenv/config';
 import {Client, Collection, Intents} from 'discord.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import * as passiveCommands from './commands/bot/passiveCommands.js';
+import * as msg from './commands/bot/msg.js';
 import Glob from 'glob'
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
+const guildID = process.env.GUILD_ID;
 client.commands = new Collection();
 const commandGlob = Glob.sync('commands' + '/**/*');
 const commandFiles = commandGlob.filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	
+	if (file.includes('commands/bot/')) {
+		continue;
+	}
 	var command = await import(`./${file}`);
 	try {
 		command = await command.create();
@@ -26,7 +30,7 @@ for (const file of commandFiles) {
 	(async () => {
 		try {
 			client.commands.set(command.data.name, command);
-			console.log("Created commands");
+			console.log(`Created ${command.data.name}`);
 		} catch (error) {
 			console.log(error);
 		}
@@ -38,11 +42,27 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
+client.on('messageCreate', (message) => {
+	if(message.channel.id != "694914362095304771") { // blacklist code channel from collecting source data for !markov command
+		msg.appendMessage(message);
+	}
+});
+
+let currentChannelID;
+client.on('ready', async function(client){
+	const guild = await client.guilds.fetch(guildID);
+	currentChannelID = passiveCommands.currentChannelID(guild, client);
+})
+
+client.on('channelPinsUpdate', async function(channel, time){
+    currentChannelID = channel.id;
+    await passiveCommands.loadPins(channel);
+});
+
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
-	console.log(command);
 
 	if (!command) return;
 
