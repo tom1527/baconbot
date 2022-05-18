@@ -2,8 +2,10 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 
 const execute = async function execute(interaction) {
     var sides = 6;
-    if (interaction.options.data[0].name == "max") {
-        sides = interaction.options.data[0].value;
+    if (interaction.options.data[0]) {
+		if (interaction.options.data[0].name == "max") {
+        	sides = interaction.options.data[0].value;
+		}
     } 
     var roll = Math.floor(Math.random() * sides) + 1;
 	interaction.reply({
