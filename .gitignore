@@ -4,3 +4,5 @@ vendorauth.json
 .github/
 node_modules
 .env
+pins.json
+msg.txt
