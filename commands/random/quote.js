@@ -41,7 +41,7 @@ const execute = async function execute(interaction) {
             });
         } catch (error) {
             console.log(error);
-            channel.send("There was an error. Please try \"!quote -l\"");
+            interaction.reply("There was an error. Please try \"!quote -l\"");
         }
         //await passiveCommands.loadPins(message.channel);
     }
@@ -80,4 +80,4 @@ async function create() {
 	return command;
 }
 
-export { create, execute };
+export { create };
