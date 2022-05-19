@@ -38,7 +38,6 @@ import * as fs from 'fs';
                 console.log("Loading " + i[1].name + " channel...");
                 const permissions = i[1].permissionsFor(guild.me)
                 if(i[1].permissionsFor(guild.me).has('VIEW_CHANNEL')){
-                // if (i[1].)
                     channelMessages = await i[1].messages.fetchPinned();
                     messageCollection = await messageCollection.concat(channelMessages);
                     console.log(i[1].name + " channel found!");
@@ -118,11 +117,20 @@ import * as fs from 'fs';
         // else continue;
         }
 
-        await fs.writeFile(pinsPath, JSON.stringify(objectArray), function(error){
+        fs.writeFileSync(pinsPath, JSON.stringify(objectArray), function(error){
             if(error) throw error;
         });
 
-        return 0;
+        const pins = fs.readFileSync(pinsPath, 'utf8', function (error, data) {
+            if(error) throw error;
+            return data
+        });
+
+        if(pins.length) {
+            return 200;
+        } else {
+            return 500
+        }
     }
 
     const getAllChannels = async function(guild){
