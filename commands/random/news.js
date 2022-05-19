@@ -4,14 +4,20 @@ import { MessageEmbed } from 'discord.js';
 import https from 'https'
       
 const execute = async function execute(interaction) {
+    await interaction.deferReply();
     const options = {
         method: 'GET',
         hostname: 'www.reddit.com',
         path: '/r/nottheonion.json?limit=100&raw_json=1'
     }
 
-    const response = await callApi(options);
-    console.log(response);
+    const rawResponse = await callApi(options);
+    var response = "";
+    try {
+        response = JSON.parse(rawResponse);
+    } catch (error) {
+        console.log(error)
+    }
     let index = Math.floor((Math.random() * 50) + 1);
     let imageURL;
 
@@ -36,7 +42,7 @@ const execute = async function execute(interaction) {
     
     const embed = new MessageEmbed(data);
 
-    interaction.reply({
+    interaction.editReply({
 		embeds: [embed],
 		ephemeral: false,
 	});
@@ -55,7 +61,7 @@ async function callApi(options) {
         
             res.on('close', () => {
                 console.log('Retrieved all data');
-                resolve (JSON.parse(data));
+                resolve (data);
             });
         });
 
