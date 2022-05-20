@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import 'dotenv/config';
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
+import { APICaller } from '../../APICaller.js';
 import https from 'https'
 async function execute(interaction) {
     await interaction.deferReply();
@@ -9,13 +10,13 @@ async function execute(interaction) {
         port: 443,
         hostname: 'api.wordnik.com',
         path: '/v4/words.json/wordOfTheDay',
-        auth: ` Bearer ${process.env.wordnik_key}`,
         headers: {
-            api_key: "fd118023a7c364f7de53208db9c0ad489caf6938a5ad9ce95",
+            api_key: process.env.wordnik_key,
         }
     }
 
-    const rawResponse = await callApi(options);
+    const apiCaller = new APICaller();
+    const rawResponse = await apiCaller.makeApiCall(options);
     var response = "";
     try {
         response = JSON.parse(rawResponse);
@@ -57,32 +58,6 @@ async function execute(interaction) {
     });
 }
 
-async function callApi(options) {
-    return new Promise ((resolve, reject) => {
-        const req = https.request(options, res => {
-            console.log(`statusCode: ${res.statusCode}`)
-        
-            let data = '';
-        
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-        
-            res.on('close', () => {
-                console.log('Retrieved all data');
-                resolve (data);
-            });
-        });
-
-        req.on('error', error => {
-            reject(error);
-            console.error(error);
-        }),
-
-        req.end();
-    });
-}
-
 async function parse(body, interaction){
     let word = body.word;
     let part;
@@ -112,34 +87,7 @@ async function parse(body, interaction){
 
     const wotdArray = {word: word, part: part, def: def, eg: eg, origin: origin};
     return wotdArray;
-    // write(word, part, def, eg, origin, message);
 }
-
-/* function write(word, part, def, eg, origin, message){
-    message.channel.send({embed: {
-        title: "Word of the Day",
-        description: "**__" + word + "__** (" + part + ")",
-        color: 0x09aa03, // green
-        footer: {
-            icon_url: message.guild.me.user.avatarURL,
-            text: message.guild.me.nickname
-        },
-        fields: [
-            {
-                name: "Definition",
-                value: def
-            },
-            {
-                name: "Example",
-                value: eg
-            },
-            {
-                name: "Origin",
-                value: origin
-            }
-        ]
-    }})
-} */
 
 async function create() {
     const data = new SlashCommandBuilder()

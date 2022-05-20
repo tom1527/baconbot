@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import 'discord.js';
 import { MessageEmbed } from 'discord.js';
-import https from 'https'
+import { APICaller } from '../../APICaller.js';
       
 const execute = async function execute(interaction) {
     await interaction.deferReply();
@@ -11,7 +11,8 @@ const execute = async function execute(interaction) {
         path: '/r/nottheonion.json?limit=100&raw_json=1'
     }
 
-    const rawResponse = await callApi(options);
+    const apiCaller = new APICaller();
+    const rawResponse = await apiCaller.makeApiCall(options);
     var response = "";
     try {
         response = JSON.parse(rawResponse);
@@ -46,32 +47,6 @@ const execute = async function execute(interaction) {
 		embeds: [embed],
 		ephemeral: false,
 	});
-}
-
-async function callApi(options) {
-    return new Promise ((resolve, reject) => {
-        const req = https.request(options, res => {
-            console.log(`statusCode: ${res.statusCode}`)
-        
-            let data = '';
-        
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-        
-            res.on('close', () => {
-                console.log('Retrieved all data');
-                resolve (data);
-            });
-        });
-
-        req.on('error', error => {
-            reject(error);
-            console.error(error);
-        }),
-
-        req.end();
-    });
 }
 
 async function create() {
