@@ -1,34 +1,64 @@
-const commando = require('discord.js-commando');
-const fs = require('fs');
-const request = require('request');
-
-const filePath = "vendorauth.json";
-const auth = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-const key = auth.wordnik_key;
-const URL = "https://api.wordnik.com/v4/words.json/wordOfTheDay?api_key="
-
-class WordOfTheDay extends commando.Command {
-    constructor(client){
-        super(client, {
-            name: 'wotd',
-            group: 'dictionary',
-            memberName: 'wotd',
-            description: 'Word of the Day'
-        });
+import { SlashCommandBuilder } from '@discordjs/builders';
+import 'dotenv/config';
+import { MessageEmbed } from 'discord.js';
+import { APICaller } from '../../APICaller.js';
+import https from 'https'
+async function execute(interaction) {
+    await interaction.deferReply();
+    const options = {
+        method: 'GET',
+        port: 443,
+        hostname: 'api.wordnik.com',
+        path: '/v4/words.json/wordOfTheDay',
+        headers: {
+            api_key: process.env.wordnik_key,
+        }
     }
 
-    async run(message, args){
-
-        request(URL + key, {json: true}, function(err, res, body){
-            if(err) throw err;
-            parse(body, message);
-        });
-
-        //message.channel.send("Go do something else while you wait asshole.");
+    const apiCaller = new APICaller();
+    const rawResponse = await apiCaller.makeApiCall(options);
+    var response = "";
+    try {
+        response = JSON.parse(rawResponse);
+    } catch (error) {
+        console.log(error)
     }
+
+    const wotdArray = await parse(response, interaction);
+
+    const data = {
+        title: "Word of the Day",
+        description: "**__" + wotdArray.word + "__** (" + wotdArray.part + ")",
+        color: 0x09aa03, // green
+        footer: {
+            icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
+            text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
+        },
+        fields: [
+            {
+                name: "Definition",
+                value: wotdArray.def
+            },
+            {
+                name: "Example",
+                value: wotdArray.eg
+            },
+            {
+                name: "Origin",
+                value: wotdArray.origin
+            }
+        ]
+    }
+
+    const embed = new MessageEmbed(data);
+
+    interaction.editReply({
+        embeds: [embed],
+        ephemeral: false,
+    });
 }
 
-function parse(body, message){
+async function parse(body, interaction){
     let word = body.word;
     let part;
     let def;
@@ -54,6 +84,7 @@ function parse(body, message){
         def = body.definitions[0].text;
     else
         def = "No definition provided.";
+<<<<<<< HEAD
     
     write(word, part, def, eg, origin, message);
 }
@@ -85,3 +116,23 @@ function write(word, part, def, eg, origin, message){
 }
 
 module.exports = WordOfTheDay;
+=======
+
+    const wotdArray = {word: word, part: part, def: def, eg: eg, origin: origin};
+    return wotdArray;
+}
+
+async function create() {
+    const data = new SlashCommandBuilder()
+        .setName('wotd')
+        .setDescription('Word of the Day')
+    const command = {
+        data: data,
+        execute: execute
+    } 
+    
+    return command;
+}
+
+export { create }
+>>>>>>> refactor

@@ -1,7 +1,8 @@
 discordauth.json
 vendorauth.json
-msg.txt
-pins.json
 .git/
 .github/
 node_modules
+.env
+pins.json
+msg.txt

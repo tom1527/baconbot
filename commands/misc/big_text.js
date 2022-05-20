@@ -1,25 +1,14 @@
-const commando = require('discord.js-commando');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-class BigTextCommand extends commando.Command {
-    constructor(client){
-        super(client, {
-            name: 'big',
-            group: 'misc',
-            memberName: 'big',
-            description: 'Converts your message into emoji letters.'
-        });
-    }
+const execute = async function execute(interaction) {
+    var response = '';
 
-    async run(message, args){
-        message.delete();
+    response += parse(interaction.options.data[0].value);
 
-        if(message.author.lastMessage.member.nickname)
-            message.channel.send(message.author.lastMessage.member.nickname + " says:");
-        else    
-            message.channel.send(message.author.username + " says:")
-        
-        message.channel.send(parse(args.toLowerCase()));
-    }
+	interaction.reply({
+		content: response,
+		ephemeral: false,
+	});
 }
 
 function parse(str){
@@ -94,4 +83,24 @@ function parse(str){
     return output;
 }
 
+<<<<<<< HEAD
 module.exports = BigTextCommand;
+=======
+async function create() {
+    const data = new SlashCommandBuilder()
+        .setName('big')
+        .setDescription('Converts your message into emoji letters.')
+        .addStringOption(option =>
+            option.setName('input')
+                .setDescription('The input to convert')
+                .setRequired(true));
+	const command = {
+        data: data,
+        execute: execute
+    } 
+	
+	return command;
+}
+
+export { create };
+>>>>>>> refactor

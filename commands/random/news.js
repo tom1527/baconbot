@@ -1,52 +1,64 @@
-const commando = require('discord.js-commando');
-const fs = require('fs');
-const request = require('request');
-
-const filePath = "vendorauth.json";
-const keys = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-const appID = keys.reddit_appID;
-const secret = keys.reddit_secret;
-
-class News extends commando.Command {
-    constructor(client){
-        super(client, {
-            name: 'news',
-            group: 'random',
-            memberName: 'news',
-            description: 'So much breaking news your screen will crack (I\'m ugly now because reddit blocked me from getting the preview images)'
-        });
+import { SlashCommandBuilder } from '@discordjs/builders';
+import 'discord.js';
+import { MessageEmbed } from 'discord.js';
+import { APICaller } from '../../APICaller.js';
+      
+const execute = async function execute(interaction) {
+    await interaction.deferReply();
+    const options = {
+        method: 'GET',
+        hostname: 'www.reddit.com',
+        path: '/r/nottheonion.json?limit=100&raw_json=1'
     }
 
-    async run(message, args){
-        
-        request.get("http://www.reddit.com/r/nottheonion.json?limit=100&raw_json=1", {}, function(err, res, body){
-            if(err) throw err;
-            
-            let result = JSON.parse(body);
-            let index = Math.floor((Math.random() * 50) + 1);
-            let imageURL;
-
-            if (result.data.children[index].data.preview)
-                imageURL = result.data.children[index].data.preview.images[0].source.url
-            else
-                imageURL = ""
-
-            message.channel.send({embed: {
-                color: 0x13c37a, // turquoise
-                title: "Breaking News!",
-                image: {
-                    url: imageURL
-                },
-                description: "[" + result.data.children[index].data.title + "]" + '(http://www.reddit.com' + result.data.children[index].data.permalink + ")",
-                footer: {
-                    icon_url: message.guild.me.user.avatarURL,
-                    text: message.guild.me.nickname
-                }
-            }});
-        }).auth(appID, secret, true);
-
-        //message.channel.send("Impatient twat.");
+    const apiCaller = new APICaller();
+    const rawResponse = await apiCaller.makeApiCall(options);
+    var response = "";
+    try {
+        response = JSON.parse(rawResponse);
+    } catch (error) {
+        console.log(error)
     }
+    let index = Math.floor((Math.random() * 50) + 1);
+    let imageURL;
+
+    if (response.data.children[index].data.preview) {
+        imageURL = response.data.children[index].data.preview.images[0].source.url
+    } else {
+        imageURL = ""
+    }
+
+    const data = {
+        color: 0x13c37a, // turquoise
+        title: "Breaking News!",
+        image: {
+            url: imageURL
+        },
+        description: "[" + response.data.children[index].data.title + "]" + '(http://www.reddit.com' + response.data.children[index].data.permalink + ")",
+        footer: {
+            icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
+            text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
+        }
+    }
+    
+    const embed = new MessageEmbed(data);
+
+    interaction.editReply({
+		embeds: [embed],
+		ephemeral: false,
+	});
 }
 
-module.exports = News;
+async function create() {
+    const data = new SlashCommandBuilder()
+        .setName('news')
+        .setDescription('So much breaking news your screen will crack')
+    const command = {
+        data: data,
+        execute: execute
+    } 
+    
+    return command;
+}
+
+export { create };

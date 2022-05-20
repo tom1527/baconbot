@@ -1,20 +1,32 @@
-const commando = require('discord.js-commando');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-class DiceRollCommand extends commando.Command {
-    constructor(client){
-        super(client, {
-            name: 'roll',
-            group: 'random',
-            memberName: 'roll',
-            description: 'Rolls a die'
-        });
-    }
-
-    async run(message, args){
-        if (args == 0) args = 6;
-        var roll = Math.floor(Math.random() * args) + 1;
-        message.reply("You rolled a " + roll);
-    }
+const execute = async function execute(interaction) {
+    var sides = 6;
+    if (interaction.options.data[0]) {
+		if (interaction.options.data[0].name == "max") {
+        	sides = interaction.options.data[0].value;
+		}
+    } 
+    var roll = Math.floor(Math.random() * sides) + 1;
+	interaction.reply({
+		content: "You rolled a " + roll,
+		ephemeral: false,
+	});
 }
 
-module.exports = DiceRollCommand;
+async function create() {
+	const data = new SlashCommandBuilder()
+		.setName('roll')
+		.setDescription('Rolls a die.')
+        .addIntegerOption(option =>
+            option.setName('max')
+                .setDescription('The number of sides to the dice')
+                .setRequired(false));
+	const command = {
+		data: data,
+		execute: execute
+	}
+	return command;
+}
+
+export { create };

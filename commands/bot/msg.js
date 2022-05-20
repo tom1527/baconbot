@@ -1,4 +1,4 @@
-const fs = require('fs');
+import * as fs from 'fs';
 
 let filePath = "./msg.txt";
 let sourceText = fs.readFileSync(filePath, 'utf8');
@@ -10,6 +10,7 @@ if(data[0] == '' || data[0] == '\n') data.shift();
 
 let maxSize = 15000;
 
+<<<<<<< HEAD
 module.exports = {
     loadMessage: function(mes){
         if(!mes.author.bot){
@@ -37,11 +38,49 @@ module.exports = {
             if(fileStats.size < 5000000000){ // 5GB file limit
                 fs.appendFileSync(filePath, '\n' + mes.content);
             }
+=======
+
+const loadMessage = function(mes){
+    if(!mes.author.bot){
+        appendArray(mes.content);
+        fs.writeFileSync(filePath, "");
+
+        for(var i = 0; i < data.length; i++){
+            if(data[i] == '' || data[i] == '\n'){
+                data.splice(i, 1);
+                continue;
+            }
+            fs.appendFileSync(filePath, '\n' + data[i]);
+>>>>>>> refactor
         }
     }
 }
+
+<<<<<<< HEAD
+function appendArray(str){
+    while(data.length >= maxSize) data.shift();
+    data.push(str);
+}
+=======
+const loadMessageString = function(str){
+    appendArray(str);
+    fs.writeFileSync(filePath, "");
+    fs.appendFileSync(filePath, '\n' + data[data.length - 1]);
+}
+
+const appendMessage = function(mes){
+    if(!mes.author.bot){
+        if(fileStats.size < 5000000000){ // 5GB file limit
+            fs.appendFileSync(filePath, '\n' + mes.content);
+        }
+    }
+}
+
 
 function appendArray(str){
     while(data.length >= maxSize) data.shift();
     data.push(str);
 }
+
+export { loadMessage, loadMessageString, appendMessage, appendArray}
+>>>>>>> refactor
