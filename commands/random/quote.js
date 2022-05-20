@@ -7,16 +7,14 @@ import * as fs from 'fs';
 let filePath = "./pins.json";
 
 const execute = async function execute(interaction) {
-    if (interaction.options.data[0]) {
-		if (interaction.options.data[0].name == "loadpins") {
-            await interaction.deferReply();
-            const statusCode = await passiveCommands.loadPins(interaction.channel);
-            console.log(statusCode);
-            if (statusCode === 200) {
-                await interaction.editReply('Pins loaded!');
-            } else {
-                await interaction.editReply('Error! Something went wrong.');
-            }
+    if (interaction.options.data[0] && interaction.options.data[0].value == true) {
+        await interaction.deferReply();
+        const statusCode = await passiveCommands.loadPins(interaction.channel);
+        console.log(statusCode);
+        if (statusCode === 200) {
+            await interaction.editReply('Pins loaded!');
+        } else {
+            await interaction.editReply('Error! Something went wrong.');
         }
     } else {
         let pins = await parsePins(interaction.guild_id);
@@ -66,13 +64,11 @@ async function create() {
 	const data = new SlashCommandBuilder()
 		.setName('quote')
 		.setDescription('Returns a random pin.')
-        .addStringOption(option =>
-            option.setName('loadpins')
-                .setDescription('Parses pins to update pin pool.')
-                .addChoices({
-                    "name": "loadpins",
-                    "value": "loadpins"
-                }));
+        .addBooleanOption(option =>
+            option
+            .setName('loadpins')
+            .setDescription('Parses pins to update pin pool.')
+        )
 	const command = {
 		data: data,
 		execute: execute
