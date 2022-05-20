@@ -84,39 +84,6 @@ async function parse(body, interaction){
         def = body.definitions[0].text;
     else
         def = "No definition provided.";
-<<<<<<< HEAD
-    
-    write(word, part, def, eg, origin, message);
-}
-
-function write(word, part, def, eg, origin, message){
-    message.channel.send({embed: {
-        title: "Word of the Day",
-        description: "**__" + word + "__** (" + part + ")",
-        color: 0x09aa03, // green
-        footer: {
-            icon_url: message.guild.me.user.avatarURL,
-            text: message.guild.me.nickname
-        },
-        fields: [
-            {
-                name: "Definition",
-                value: def
-            },
-            {
-                name: "Example",
-                value: eg
-            },
-            {
-                name: "Origin",
-                value: origin
-            }
-        ]
-    }})
-}
-
-module.exports = WordOfTheDay;
-=======
 
     const wotdArray = {word: word, part: part, def: def, eg: eg, origin: origin};
     return wotdArray;
@@ -135,4 +102,3 @@ async function create() {
 }
 
 export { create }
->>>>>>> refactor

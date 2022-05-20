@@ -83,9 +83,6 @@ function parse(str){
     return output;
 }
 
-<<<<<<< HEAD
-module.exports = BigTextCommand;
-=======
 async function create() {
     const data = new SlashCommandBuilder()
         .setName('big')
@@ -103,4 +100,3 @@ async function create() {
 }
 
 export { create };
->>>>>>> refactor
