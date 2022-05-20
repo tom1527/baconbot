@@ -70,10 +70,14 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		if(interaction.isRepliable()) {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: true });
+		try {
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: false });
+		}	catch (error) {
+			if (error.code === 'INTERACTION_ALREADY_REPLIED') {
+				await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: false });
+			} else {
+				console.log(error);
+			}
 		}
 	}
 });
