@@ -19,6 +19,7 @@
     "express": "^4.17.3",
     "glob": "^8.0.3",
     "https": "^1.0.0",
+    "markov-strings": "^3.0.1",
     "node-fetch": "^3.2.3"
   }
 }
