@@ -1,4 +1,4 @@
-const commando = require('discord.js-commando');
+/* const commando = require('discord.js-commando');
 
 class WordCloudCommand extends commando.Command {
     constructor(client){
@@ -15,4 +15,4 @@ class WordCloudCommand extends commando.Command {
     }
 }
 
-module.exports = WordCloudCommand;
+module.exports = WordCloudCommand; */

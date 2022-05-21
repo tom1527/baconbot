@@ -1,4 +1,4 @@
-const commando = require('discord.js-commando');
+/* const commando = require('discord.js-commando');
 const Discord = require('discord.js');
 const fs = require('fs');
 
@@ -42,4 +42,4 @@ class GTASA extends commando.Command {
     }
 }
 
-module.exports = GTASA;
+module.exports = GTASA; */

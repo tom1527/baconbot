@@ -1,4 +1,4 @@
-const commando = require('discord.js-commando');
+/* const commando = require('discord.js-commando');
 const fs = require('fs');
 var unirest = require('unirest');
 
@@ -91,4 +91,4 @@ async function processData(data, message){
     }
 }
 
-module.exports = DefineCommand;
+module.exports = DefineCommand; */
