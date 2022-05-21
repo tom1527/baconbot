@@ -1,11 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 import 'dotenv/config';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import Glob from 'glob'
 
 const commandGlob = Glob.sync('commands' + '/**/*');
