@@ -51,7 +51,7 @@ client.on('messageCreate', (message) => {
 let currentChannelID;
 client.on('ready', async function(client){
 	const guild = await client.guilds.fetch(guildID);
-	currentChannelID = passiveCommands.currentChannelID(guild, client);
+	currentChannelID = passiveCommands.getCurrentChannelID(guild, client);
 })
 
 client.on('channelPinsUpdate', async function(channel, time){

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 // TODO: instead of just getting pins from channels and rewriting the file every time, parse the text file first and then compare JSONs and 
 // if there's a difference, then rewrite
 
-    const currentChannelID = function(guild, client){
+    const getCurrentChannelID = function(guild, client){
         let latestChannel = 0;
         /* guild.channels.cache.forEach(function(channel){
             if(channel.type == 'text'){
@@ -137,4 +137,4 @@ import * as fs from 'fs';
         return guild.channels;
     }
 
-export { currentChannelID, loadPins, getAllChannels }
+export { getCurrentChannelID, loadPins, getAllChannels }
