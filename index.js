@@ -60,9 +60,22 @@ client.on('channelPinsUpdate', async function(channel, time){
 });
 
 client.on('interactionCreate', async interaction => {
+	if (interaction.isModalSubmit()) {
+		if(interaction.customId === "markovmodal") {
+			const command = client.commands.get('markov');	
+			const userOptions = []
+			const minScoreField = interaction.fields.getTextInputValue('minScore');
+			const maxWordsField = interaction.fields.getTextInputValue('maxWords');
+			const minWordsField = interaction.fields.getTextInputValue('minWords');
+			const maxTriesField = interaction.fields.getTextInputValue('maxTries');
+			userOptions.push(minScoreField, maxWordsField, minWordsField, maxTriesField);
+			command.execute(interaction, userOptions);
+		}
+	}
+
 	if (!interaction.isCommand()) return;
 
-	const command = client.commands.get(interaction.commandName);
+	const command = client.commands.get(interaction.commandName);	
 
 	if (!command) return;
 
