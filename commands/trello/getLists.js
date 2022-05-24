@@ -38,12 +38,38 @@ class GetLists extends commando.Command {
     }
 } */
 
-async function execute(interaction) {
-    await interaction.deferReply();
+async function execute(interaction, client, embedTitle, returnids) {
+    if(!interaction.deferred) await interaction.deferReply();
     let idBoolean;
-    if (interaction.options && interaction.options.data.length){    
+    if (interaction.options && interaction.options.data.length && !returnids){    
         idBoolean = interaction.options.getBoolean('returnids');
+    } else if (returnids) {
+        idBoolean = true;
     }
+    
+    const response = listsAPICall();
+
+    let fields = [];
+    for(let i = 0; i < response.length; i++) {
+        fields.push({
+            name: response[i].name,
+            ...(idBoolean) && {value: `ID: ${response[i].id}`},
+            ...(!idBoolean) && {value: "\u200b"},
+        })
+    }
+    // var listsList = listNames.join("\n");
+    const data = {
+        title: embedTitle ? embedTitle : "Lists for the BaconBot Board",
+        fields: fields
+    }
+    const embed = new MessageEmbed(data);
+    interaction.editReply({
+        embeds: [embed],
+        ephemeral: true,
+    });
+}
+
+async function listsAPICall() {
     const boardId = "62756d312de50469a3faaf36";
     const options = {
         method: "GET",
@@ -56,28 +82,10 @@ async function execute(interaction) {
     var response = "";
     try {
         response = JSON.parse(rawResponse);
+        return response;
     } catch (error) {
         console.log(error)
     }
-    
-    let fields = [];
-    for(let i = 0; i < response.length; i++) {
-        fields.push({
-            name: response[i].name,
-            ...(idBoolean) && {value: `ID: ${response[i].id}`},
-            ...(!idBoolean) && {value: "\u200b"},
-        })
-    }
-    // var listsList = listNames.join("\n");
-    const data = {
-        title: "Lists for the BaconBot Board",
-        fields: fields
-    }
-    const embed = new MessageEmbed(data);
-    interaction.editReply({
-        embeds: [embed],
-        ephemeral: true,
-    });
 }
 
 async function create() {
