@@ -3,18 +3,18 @@ class APICaller {
 
     constructor() {
 
-    }
+    }  
 
-    async makeApiCall(options) {
+    async makeApiCall(options, data) {
         return new Promise ((resolve, reject) => {
             const req = https.request(options, res => {
                 console.log(`statusCode: ${res.statusCode}`);
 
-                if(res.statusCode > 400) {
+                if(res.statusCode >= 399) {
                     reject(res.statusCode);
                 }
             
-                let data = '';
+                data = '';
             
                 res.on('data', (chunk) => {
                     data += chunk;
@@ -25,12 +25,13 @@ class APICaller {
                     resolve (data);
                 });
             });
-    
+            if(data) {
+                req.write(data)
+            }
             req.on('error', error => {
                 reject(error);
                 console.error(error);
-            }),
-    
+            });
             req.end();
         });
     }
