@@ -47,7 +47,8 @@ async function execute(interaction, client, embedTitle, returnids) {
         idBoolean = true;
     }
     
-    const response = listsAPICall();
+    const response = await listsAPICall();
+    console.log(response);
 
     let fields = [];
     for(let i = 0; i < response.length; i++) {
@@ -99,7 +100,8 @@ async function create() {
         
     const command = {
         data: data,
-        execute: execute
+        execute: execute,
+        listsAPICall: listsAPICall
     } 
 
 return command;
