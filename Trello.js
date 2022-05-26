@@ -1,7 +1,28 @@
+import { APICaller } from "./APICaller.js";
+
 class Trello {
 
     constructor() {
 
+    }
+
+    async getLists() {
+        const boardId = "62756d312de50469a3faaf36";
+        const options = {
+            method: "GET",
+            port: 443,
+            hostname: "api.trello.com",
+            path: `/1/boards/${boardId}/lists?key=${process.env.trello_key}&token=${process.env.trello_token}`,
+        }
+        const apiCaller = new APICaller();
+        const rawResponse = await apiCaller.makeApiCall(options);
+        let lists;
+        try {
+            lists = JSON.parse(rawResponse);
+            return lists;
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async getClosestList(listName, lists) {
