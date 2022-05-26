@@ -61,7 +61,10 @@ client.on('channelPinsUpdate', async function(channel, time){
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.isModalSubmit()) {
-
+		if(interaction.customId == 'suggestionModal') {
+			const command = client.commands.get('suggest')
+			await command.execute(interaction, client);
+		}
 	}
 
 	if (!interaction.isCommand()) return;

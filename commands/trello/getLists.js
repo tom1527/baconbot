@@ -14,7 +14,6 @@ async function execute(interaction, client, embedTitle, returnids) {
     }
     
     const response = await listsAPICall();
-    console.log(response);
 
     let fields = [];
     for(let i = 0; i < response.length; i++) {
