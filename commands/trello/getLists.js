@@ -70,7 +70,7 @@ async function create() {
         listsAPICall: listsAPICall
     } 
 
-return command;
+    return command;
 }
 
 export { create }
