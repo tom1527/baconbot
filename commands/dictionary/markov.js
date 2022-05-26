@@ -29,7 +29,7 @@ async function execute(interaction) {
             await interaction.reply({content : "Error - at least one flag must be true if specified.", ephemeral: true});
         } */
     } 
-    console.log(minScore);
+    
     await interaction.deferReply();
 
     const scoreFilter = resScore ? resScore : 100;
