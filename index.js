@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import * as passiveCommands from './commands/bot/passiveCommands.js';
 import * as msg from './commands/bot/msg.js';
 import Glob from 'glob'
+import webhook from './webhook.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -90,3 +91,5 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
+webhook.setUpWebhook();
