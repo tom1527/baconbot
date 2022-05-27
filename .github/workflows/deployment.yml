@@ -59,7 +59,7 @@ jobs:
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot && git pull origin master
+          command: cd /usr/local/bin/baconbot2 && git pull origin master
 
 
 
@@ -68,14 +68,14 @@ jobs:
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot && sudo npm install
+          command: cd /usr/local/bin/baconbot2 && sudo npm install
         
       - name: Change dir permissions
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: sudo chmod -R 777 /usr/local/bin/baconbot
+          command: sudo chmod -R 777 /usr/local/bin/baconbot2
 
 #       - name: Restart baconbot.service
 #         uses: JimCronqvist/action-ssh@master
