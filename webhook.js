@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import * as fs from 'fs';
 
-function setUpWebhook() {
+function setUpWebhook(client) {
     const app = express();
     
     app.use(bodyParser.urlencoded({extended: true}));
@@ -27,7 +27,9 @@ function setUpWebhook() {
               console.error(err);
             }
             // file written successfully
-          });
+        });
+
+        displayTrelloNotifications(client, req.body);
 
         res.json(data);
     });
