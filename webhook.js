@@ -21,8 +21,8 @@ function setUpWebhook() {
     
     app.post('/baconbotwebhook', (req, res) => {
         const data = 200;
-        
-        fs.writeFile('./trelloresponse.txt', req.body, err => {
+        const trelloMessage = JSON.stringify(req.body);
+        fs.writeFile('./trelloresponse.txt', trelloMessage, err => {
             if (err) {
               console.error(err);
             }
