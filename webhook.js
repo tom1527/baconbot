@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import * as fs from 'fs';
 
 function setUpWebhook() {
     const app = express();
@@ -20,7 +21,14 @@ function setUpWebhook() {
     
     app.post('/baconbotwebhook', (req, res) => {
         const data = 200;
-    
+        
+        fs.writeFile('./trelloresponse.txt', req.body, err => {
+            if (err) {
+              console.error(err);
+            }
+            // file written successfully
+          });
+
         res.json(data);
     });
 }
