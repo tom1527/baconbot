@@ -16,3 +16,4 @@ async function displayTrelloNotifications(client, notification) {
         }
     }
 }
+export default { displayTrelloNotifications }

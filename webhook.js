@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import * as fs from 'fs';
+import trelloNotifications from './displayTrelloNotifications.js';
 
 function setUpWebhook(client) {
     const app = express();
@@ -29,7 +30,7 @@ function setUpWebhook(client) {
             // file written successfully
         });
 
-        displayTrelloNotifications(client, req.body);
+        trelloNotifications.displayTrelloNotifications(client, req.body);
 
         res.json(data);
     });
