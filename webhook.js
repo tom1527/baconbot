@@ -13,6 +13,10 @@ function setUpWebhook() {
     app.listen(port, () => {
         console.log(`Baconbot Trello webhook listening on port ${port}`)
     })
+
+    app.get('/baconbotwebhook', (req, res) => {
+        res.send(200)
+    });
     
     app.post('/baconbotwebhook', (req, res) => {
         const data = 200;
