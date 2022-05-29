@@ -7,8 +7,8 @@ async function displayTrelloNotifications(client, notification) {
     const card = notification.action.display.entities.card ? notification.action.display.entities.card.text : "";
     const list = notification.action.display.entities.list ? notification.action.display.entities.list.text : "";
     const checklist = notification.action.display.entities.checklist ? notification.action.display.entities.checklist.text : "";
-    const checkItem = notification.action.display.entities.checkItem ? notification.action.display.entities.checkItem.text : "";
-    const checkItemStatus = notification.action.display.entities.checkItem ? notification.action.display.entities.checkItem.state : "";
+    const checkItem = notification.action.display.entities.checkitem ? notification.action.display.entities.checkitem.text : "";
+    const checkItemStatus = notification.action.display.entities.checkitem ? notification.action.display.entities.checkitem.state : "";
 
     switch(notification.action.type) {
         case 'updateCard':
