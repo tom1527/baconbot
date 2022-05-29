@@ -6,6 +6,10 @@ async function displayTrelloNotifications(client, notification) {
     const user = notification.action.memberCreator ? notification.action.memberCreator.username : "";
     const card = notification.action.display.entities.card ? notification.action.display.entities.card.text : "";
     const list = notification.action.display.entities.list ? notification.action.display.entities.list.text : "";
+    const checklist = notification.action.display.entities.checklist ? notification.action.display.entities.checklist.text : "";
+    const checkItem = notification.action.display.entities.checkItem ? notification.action.display.entities.checkItem.text : "";
+    const checkItemStatus = notification.action.display.entities.checkItem ? notification.action.display.entities.checkItem.state : "";
+
     switch(notification.action.type) {
         case 'updateCard':
             data = {
@@ -21,6 +25,12 @@ async function displayTrelloNotifications(client, notification) {
                 color: '#0000FF'
             }
             break
+        case 'deleteCard':
+            data = {
+                title: 'Card Delete',
+                description: `User **${user}** deleted the card **${card} on the list **${list}`,
+                color: '#E74C3C'
+            }
         case 'commentCard':
             data = {
                 title: 'Comment on Card',
@@ -33,16 +43,54 @@ async function displayTrelloNotifications(client, notification) {
                 ]
             }
         case 'addMemberToCard':
-            data ={
+            data = {
                 title: 'User Added to Card',
-                description: `User **${user}** added to the card **${card}**`
+                description: `User **${user}** added to the card **${card}**`,
+                color: '#E67E22'
             }
             break
         case 'removeMemberFromCard':
             data = {
                 title: 'User Removed from Card',
-                description: `User **${user}** remove from the card **${card}**`
+                description: `User **${user}** remove from the card **${card}**`,
+                color: '#E67E22'
             }
+            break
+        case 'addChecklistToCard':
+            data = {
+                title: 'Checklist Added to Card',
+                description: `User **${user}** added the checklist **${checklist}** to the card **${card}**`,
+                color: '#0000FF'
+            }
+            break
+        case 'removeChecklistFromCard':
+            data = {
+                title: 'Checklist Removed from Card',
+                description: `User **${user}** removed the checklist **${checklist}** from the card **${card}**`,
+                color: '#E74C3C'
+            }
+            break
+        case 'createCheckItem':
+            data = {
+                title: 'Checklist Item added to Checklist',
+                description: `User **${user}** added the checklist item **${checkItem}** to the checklist **${checklist}** on the card **${card}**`,
+                color: '#0000FF'
+            }
+            break
+        case 'removeChecklistFromCard':
+            data = {
+                title: 'Checklist item Removed from Checklist',
+                description: `User **${user}** removed the checklist item **${checkItem}** from the checklist **${checklist}** on the card **${card}**`,
+                color: '#E74C3C'
+            }
+            break
+        case 'updateCheckItemStateOnCard':
+            data = {
+                title: 'Checklist Item Updated on Checklist',
+                description: `User **${user}** updated the checklist item **${checkItem}** on the checklist **${checklist}** on the card **${card}** to **${checkItemStatus}**`,
+                color: '#0000FF'
+            }
+            break
 
     }
     const embed = new MessageEmbed(data);
