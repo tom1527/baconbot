@@ -6,7 +6,7 @@ async function displayTrelloNotifications(client, notification) {
     const user = notification.action.memberCreator ? notification.action.memberCreator.username : "";
     const card = notification.action.display.entities.card ? notification.action.display.entities.card.text : "";
     const list = notification.action.display.entities.list ? notification.action.display.entities.list.text : "";
-    const checklist = notification.action.display.entities.checklist ? notification.action.display.entities.checklist.name : "";
+    const checklist = notification.action.data.checklist ? notification.action.data.checklist.name : "";
     const checkItem = notification.action.display.entities.checkitem ? notification.action.display.entities.checkitem.text : "";
     const checkItemStatus = notification.action.display.entities.checkitem ? notification.action.display.entities.checkitem.state : "";
 
