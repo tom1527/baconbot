@@ -3,9 +3,9 @@ import { MessageEmbed } from 'discord.js';
 async function displayTrelloNotifications(client, notification) {
     // if(typeof(notification == ))
     var data = {}
-    const user = notification.action.memberCreator.username ? notification.action.memberCreator.username : "";
-    const card = notification.action.display.entities.card.text ? notification.action.display.entities.card.text : "";
-    const list = notification.action.display.entities.list.text ? notification.action.display.entities.list.text : "";
+    const user = notification.action.memberCreator ? notification.action.memberCreator.username : "";
+    const card = notification.action.display.entities.card ? notification.action.display.entities.card.text : "";
+    const list = notification.action.display.entities.list ? notification.action.display.entities.list.text : "";
     switch(notification.action.type) {
         case 'updateCard':
             data = {
