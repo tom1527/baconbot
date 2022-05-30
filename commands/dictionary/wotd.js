@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import 'dotenv/config';
 import { MessageEmbed } from 'discord.js';
 import { APICaller } from '../../APICaller.js';
-import https from 'https'
+
 async function execute(interaction) {
     await interaction.deferReply();
     const options = {
