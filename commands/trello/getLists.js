@@ -50,7 +50,6 @@ async function create() {
     const command = {
         data: data,
         execute: execute,
-        listsAPICall: listsAPICall
     } 
 
     return command;
