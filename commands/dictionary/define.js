@@ -1,94 +1,92 @@
-/* const commando = require('discord.js-commando');
-const fs = require('fs');
-var unirest = require('unirest');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import 'dotenv/config';
+import { MessageEmbed } from 'discord.js';
+import { APICaller } from '../../APICaller.js';
 
-const filePath = "vendorauth.json";
-const auth = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+async function execute(interaction, client) {
+    await interaction.deferReply();
+    var term = interaction.options.getString('term');
+    term = term.replace(/ /g, "%20");
 
-class DefineCommand extends commando.Command {
-    constructor(client){
-        super(client, {
-            name: 'define',
-            group: 'dictionary',
-            memberName: 'define',
-            description: 'Get Urban Dictionary Definition'
-        });
+    const options = {
+        method: 'GET',
+        port: '443',
+        hostname: 'api.urbandictionary.com',
+        path: `/v0/define?term=${term}`,
     }
 
-    async run(message, args){
-        const req = unirest("GET", "https://mashape-community-urban-dictionary.p.rapidapi.com/define");
-        req.query({
-            "term": args
-        });
-        req.headers({
-            "X-RapidAPI-Host": "mashape-community-urban-dictionary.p.rapidapi.com",
-            "X-RapidAPI-Key": auth.ud_key,
-            "useQueryString": true
-        });
-        req.end(function (res) {
-            if (res.error) throw new Error(res.error);
-        
-            processData(res, message);
-        });
+    const apiCaller = new APICaller();
+    const rawResponse = await apiCaller.makeApiCall(options);
+    var response = "";
+    try {
+        response = JSON.parse(rawResponse);
+    } catch (error) {
+        console.log(error)
     }
+
+    const data = await processData(response);
+    const embed = new MessageEmbed(data);
+
+    interaction.editReply({
+        embeds: [embed],
+        ephemeral: false,
+    })
 }
 
-async function processData(data, message){
-    if(data.body){
-        for(let i = 0; i < 9; i++){
-            if(data.body.list[i]){
-                let def = data.body.list[i].definition;
-                if(def.length < 2000){
-                    def = def.replace(/\[/g, '');
-                    def = def.replace(/\]/g, '');
+async function processData(response){
+    console.log(response);
+    let definition = {}
+    for(let i = 0; i < 9; i++){
+        if(response.list[i]){
+            let def = response.list[i].definition;
+            if(def.length < 2000){
+                def = def.replace(/\[/g, '');
+                def = def.replace(/\]/g, '');
 
-                    let eg = data.body.list[i].example;
-                    if(eg){
-                        eg = eg.replace(/\[/g, '');
-                        eg = eg.replace(/\]/g, '');
-
-                        message.channel.send({embed: {
-                            color: 0xfbf72d,
-                            title: data.body.list[i].word,
-                            url: encodeURI("https://www.urbandictionary.com/define.php?term=" + data.body.list[0].word),
-                            description: def,
-                            fields: [{
-                                name: "Example",
-                                value: eg
-                            }]
-                        }});
-                        break;
-                    }
-                    else {
-                        message.channel.send({embed: {
-                            color: 0xfbf72d,
-                            title: data.body.list[i].word,
-                            url: encodeURI("https://www.urbandictionary.com/define.php?term=" + data.body.list[0].word),
-                            description: def
-                        }});
-                        break;
-                    }
+                let eg = response.list[i].example;
+                if(eg){
+                    eg = eg.replace(/\[/g, '');
+                    eg = eg.replace(/\]/g, '');
                 }
-                else continue;
-            } 
-            else{
-                message.channel.send({embed: {
-                    color: 0xfbf72d, // yellow
-                    title: "Word not found",
-                    description: "Please try a different word."
-                }});
-                break;
+                definition = {
+                    color: 0xfb72d,
+                    title: response.list[i].word,
+                    url: encodeURI(`https://www.urbandictionary.com/define.php?term=${response.list[0].word}`),
+                    description: def,
+                    ...(eg) && {fields: [{
+                        name: "Example",
+                        value: eg
+                    }]}
+                }
+                break
+            }
+        } else {
+            definition = {
+                color: 0xfbf72d, // yellow
+                title: "Word not found",
+                description: "Please try a different word."
             }
         }
     }
-    else {
-        message.channel.send({embed: {
-            color: 0xfbf72d,
-            title: "Syntax error",
-            description: "Please try a different word."
-        }})
-        console.log("data:" + data);
-    }
+    return definition
 }
 
-module.exports = DefineCommand; */
+
+async function create() {
+    const data = new SlashCommandBuilder()
+        .setName('define')
+        .setDescription('Get Urban Dictionary Definition')
+        .addStringOption(option =>
+            option
+            .setName('term')
+            .setDescription('The term to be defined')
+            .setRequired(true));
+    const command = {
+        data: data,
+        execute: execute
+    } 
+    
+    return command;
+}
+
+export { create }
