@@ -46,6 +46,57 @@ class Trello {
             return null;
         }
     }
+    
+    async getCards(options) {
+        const apiCaller = new APICaller();
+        const rawResponse = await apiCaller.makeApiCall(options);
+        var response = "";
+        try {
+            response = JSON.parse(rawResponse);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        const cardNames = []
+        for(let i = 0; i < response.length; i++) {
+            cardNames.push({
+                name: response[i].name,
+                value: "\u200b"
+            })
+        }
+        return cardNames;
+    }
+
+    async getClosestCard(cardName) {
+        let bestMatch = null;
+        let bestMatchId = null
+        let bestDistance = 9999;
+        const lists = await this.getLists();
+        lists.forEach(list => {
+            const options = {
+                method: "GET",
+                port: 443,
+                hostname: "api.trello.com",
+                path: `/1/lists/${list.id}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
+            }
+            const cards = await this.getCards(options);
+            cards.forEach(card => {
+                const distance = await this.levenshteinDistance(cardName, card);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = lists[i].name;
+                    bestMatchId = lists[i].id
+                }
+            });
+        });
+        if(bestDistance < 3) {
+            const cardInfo = [bestMatch, bestMatchId];
+            return cardInfo;
+        } else {
+            return null;
+        }
+    }
 
     async levenshteinDistance(a="", b="") {
         const al=a.length;
