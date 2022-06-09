@@ -81,7 +81,7 @@ class Trello {
                 path: `/1/lists/${list.id}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
             }
             const cards = await this.getCards(options);
-            cards.forEach(card => {
+            cards.forEach(async card => {
                 const distance = await this.levenshteinDistance(cardName, card);
                 if (distance < bestDistance) {
                     bestDistance = distance;
