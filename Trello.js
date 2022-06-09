@@ -73,7 +73,7 @@ class Trello {
         let bestMatchId = null
         let bestDistance = 9999;
         const lists = await this.getLists();
-        lists.forEach(list => {
+        lists.forEach(async list => {
             const options = {
                 method: "GET",
                 port: 443,
