@@ -4,17 +4,8 @@ import { MessageEmbed } from 'discord.js';
 import { APICaller } from '../../APICaller.js';
 import { Trello } from '../../Trello.js';
 
-    function printCards(cards, listName, message) {
-        var cardNames = [];
-        for(let i = 0; i < cards.length; i++) {
-            cardNames.push(cards[i].name);
-        }
-        var cardsList = cardNames.join("\n");
-        message.channel.send(`Jobs on the ${listName} list: \n${cardsList}`);
-    }
-
 async function execute(interaction, client) {
-    await interaction.deferReply();
+    if(!interaction.deferred) await interaction.deferReply();
     let listId;
     let listName;
     if (!(interaction.options && interaction.options.data.length)){    
@@ -26,8 +17,9 @@ async function execute(interaction, client) {
         listId = interaction.options.getString('listid');
         listName = interaction.options.getString('listname')  
 
-        const command = client.commands.get('getlists');
-        const lists = await command.listsAPICall();
+        const trello = new Trello();
+        const lists = await trello.getLists();
+        
         if(listId) {
             for(let i = 0; i < lists.length; i++) {
                 if(listId == lists[i].id) {
@@ -35,7 +27,6 @@ async function execute(interaction, client) {
                 }
             }
         } else if(listName) {
-            const trello = new Trello;
             const listInfo = await trello.getClosestList(listName, lists);
             if(listInfo) {
                 listName = listInfo[0];
@@ -52,16 +43,8 @@ async function execute(interaction, client) {
             hostname: "api.trello.com",
             path: `/1/lists/${listId}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
         }
-        const apiCaller = new APICaller();
-        const rawResponse = await apiCaller.makeApiCall(options);
-        var response = "";
-        try {
-            response = JSON.parse(rawResponse);
-        } catch (error) {
-            console.log(error);
-            await interaction.editReply({content: 'Error: either no list was found or something else has gone wrong.', ephemeral: true});
-            return;
-        }
+        
+        const response = await trello.getCards(options);
 
         const cardNames = []
         for(let i = 0; i < response.length; i++) {
