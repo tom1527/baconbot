@@ -1,3 +1,4 @@
+import { Interaction } from "discord.js";
 import { APICaller } from "./APICaller.js";
 
 class Trello {
@@ -96,6 +97,30 @@ class Trello {
         } else {
             return null;
         }
+    }
+
+    async updateCard(cardInfo) {
+        const options = {
+            method: "PUT",
+            port: 443,
+            hostname: "api.trello.com",
+            path: `/1/cards/${cardInfo.cardId}`,
+            headers: {
+                "Content-Type": "application/json",
+                key: process.env.trello_key,
+                token: process.env.trello_token
+            }
+        }
+
+        const apiCaller = new APICaller();
+        try {
+            await apiCaller.makeApiCall(options, JSON.stringify(cardInfo));
+            return 200;
+        } catch (error) {
+            console.log(error);
+            return 500;
+        }
+        
     }
 
     async levenshteinDistance(a="", b="") {
