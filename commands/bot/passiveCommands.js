@@ -129,7 +129,7 @@ import * as fs from 'fs';
         if(pins.length) {
             return 200;
         } else {
-            return 500
+            return 500;
         }
     }
 
