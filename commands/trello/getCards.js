@@ -44,13 +44,13 @@ async function execute(interaction, client) {
             path: `/1/lists/${listId}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
         }
         
-        const response = await trello.getCards(options);
+        const cards = await trello.getCards(options);
 
         const cardNames = []
-        for(let i = 0; i < response.length; i++) {
+        for(var card in cards) {
             cardNames.push({
-                name: response[i].name,
-                value: "\u200b"
+                name: cards[card].cardName,
+                value: cards[card].desc ? cards[card].desc : "\u200b"
             })
         }
 

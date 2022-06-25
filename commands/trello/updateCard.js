@@ -21,7 +21,9 @@ async function execute(interaction, client) {
 
         // const command = client.commands.get('getlists');
         const trello = new Trello();
-        const closestCardInfo = trello.getClosestCard();
+        const closestCardInfo = await trello.getClosestCard(cardName);
+        //todo: null exception handler
+        const listId = closestCardInfo[1];
 
         console.log(closestCardInfo);
         if(closestCardInfo != null) {
@@ -31,7 +33,7 @@ async function execute(interaction, client) {
                 cardId: cardId,
                 ...(cardName) && {cardName: cardName},
                 ...(cardDesc) && {cardDesc: cardDesc},
-                ...(listId) && {idList: listId},
+                // ...(listId) && {idList: listId},
                 ...(status) && {closed: status}
             }
         } else {
@@ -40,7 +42,7 @@ async function execute(interaction, client) {
 
         if(cardInfo) {
             const trello = new Trello();
-            const response = trello.updateCard(cardInfo);
+            const response = await trello.updateCard(cardInfo);
             if(response == 200) {
                 interaction.editReply({content: 'Card updated.', ephemeral: true});
             } else {
