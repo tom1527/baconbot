@@ -1,5 +1,6 @@
 import { Interaction } from "discord.js";
 import { APICaller } from "./APICaller.js";
+import 'dotenv/config';
 
 class Trello {
 
@@ -8,7 +9,7 @@ class Trello {
     }
 
     async getLists() {
-        const boardId = "62756d312de50469a3faaf36";
+        const boardId = process.env.board_id;
         const options = {
             method: "GET",
             port: 443,
@@ -59,14 +60,17 @@ class Trello {
             return;
         }
 
-        const cardNames = []
+        const cards = {};
         for(let i = 0; i < response.length; i++) {
-            cardNames.push({
-                name: response[i].name,
-                value: "\u200b"
-            })
+            Object.assign(cards, {
+                [i]: {
+                    cardName: response[i].name,
+                    desc: response[i].desc,
+                    id: response[i].id,
+                }
+            });
         }
-        return cardNames;
+        return cards;
     }
 
     async getClosestCard(cardName) {
@@ -74,7 +78,7 @@ class Trello {
         let bestMatchId = null
         let bestDistance = 9999;
         const lists = await this.getLists();
-        lists.forEach(async list => {
+        /* lists.forEach(async list => {
             const options = {
                 method: "GET",
                 port: 443,
@@ -82,15 +86,36 @@ class Trello {
                 path: `/1/lists/${list.id}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
             }
             const cards = await this.getCards(options);
-            cards.forEach(async card => {
-                const distance = await this.levenshteinDistance(cardName, card);
+            console.log(cards);
+            cards.forEach(card => {
+                const distance = this.levenshteinDistance(cardName, card);
                 if (distance < bestDistance) {
                     bestDistance = distance;
                     bestMatch = lists[i].name;
                     bestMatchId = lists[i].id
                 }
             });
-        });
+        }); */
+        for (var list in lists) {
+            const options = {
+                method: "GET",
+                port: 443,
+                hostname: "api.trello.com",
+                path: `/1/lists/${lists[list].id}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
+            }
+            const cards = await this.getCards(options);
+            console.log(cards);
+            for(var card in cards) {
+                const distance = this.levenshteinDistance(cardName, cards[card].cardName);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = cards[card].cardName;
+                    bestMatchId = cards[card].id
+                }
+            };
+        }
+        console.log("****");
+        console.log(bestDistance);
         if(bestDistance < 3) {
             const cardInfo = [bestMatch, bestMatchId];
             return cardInfo;
@@ -104,11 +129,11 @@ class Trello {
             method: "PUT",
             port: 443,
             hostname: "api.trello.com",
-            path: `/1/cards/${cardInfo.cardId}`,
+            path: `/1/cards/${cardInfo.cardId}?key=${process.env.trello_key}&token=${process.env.trello_token}`,
             headers: {
                 "Content-Type": "application/json",
-                key: process.env.trello_key,
-                token: process.env.trello_token
+                // key: process.env.trello_key,
+                // token: process.env.trello_token
             }
         }
 
@@ -123,7 +148,7 @@ class Trello {
         
     }
 
-    async levenshteinDistance(a="", b="") {
+    levenshteinDistance(a="", b="") {
         const al=a.length;
         const bl=b.length;
         if(!al) return bl; 	
