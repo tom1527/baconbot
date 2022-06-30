@@ -32,7 +32,9 @@ async function execute(interaction, client) {
                 listName = listInfo[0];
                 listId = listInfo[1];
             } else {
-                await interaction.editReply({content: 'Error: could not find list by that name.', ephemeral: true});
+                // await interaction.editReply({content: 'Error: could not find list by that name.', ephemeral: true});
+                await interaction.deleteReply();
+                await interaction.followUp({content: 'Error: could not find list by that name.', ephemeral: true});
                 return;
             }
         }
@@ -59,9 +61,10 @@ async function execute(interaction, client) {
             fields: cardNames
         }
         const embed = new MessageEmbed(data);
-        interaction.editReply({
+        await interaction.deleteReply();
+        await interaction.followUp({
             embeds: [embed],
-            ephemeral: true,
+            // ephemeral: true,
         });
     }
 }
