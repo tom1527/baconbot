@@ -5,10 +5,11 @@ import { APICaller } from '../../APICaller.js';
 import { Trello } from '../../Trello.js';
 
 async function execute(interaction, client) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
     let cardName;
     let cardDesc;
     let listName;
+    let listId;
     let status;
     let cardInfo;
     if (!(interaction.options && interaction.options.data.length)){    
@@ -18,24 +19,45 @@ async function execute(interaction, client) {
         cardDesc = interaction.options.getString('cardDesc');
         listName = interaction.options.getString('listname');
         status = interaction.options.getString('status');
+        if(!cardDesc && !listName && !status) {
+            interaction.editReply({content: 'Error: at least one other property must be specified.', ephemeral: true});
+            return;
+        }
 
-        // const command = client.commands.get('getlists');
         const trello = new Trello();
         const closestCardInfo = await trello.getClosestCard(cardName);
         //todo: null exception handler
-        const listId = closestCardInfo[1];
+
+        if(listName) {
+            const listInfo = await trello.getClosestList(listName);
+            try {
+                listId = listInfo[1];
+            } catch (error) {
+                interaction.editReply('Sorry, a list by that name was not found.');
+                return;
+            }
+        }
+
+        if(status) {
+            if(status == "closed") {
+                status = true;
+            } else {
+                status = false;
+            }
+        }
 
         console.log(closestCardInfo);
         if(closestCardInfo != null) {
-            // const cardName = closestCardInfo[0];
+            cardName = closestCardInfo[0];
             const cardId = closestCardInfo[1];
             cardInfo = {
                 cardId: cardId,
                 ...(cardName) && {cardName: cardName},
                 ...(cardDesc) && {cardDesc: cardDesc},
-                // ...(listId) && {idList: listId},
+                ...(listId) && {idList: listId},
                 ...(status) && {closed: status}
             }
+            console.log(cardInfo);
         } else {
             interaction.editReply('Sorry, a card by that name was not found.');
         }
