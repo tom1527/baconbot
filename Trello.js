@@ -28,6 +28,9 @@ class Trello {
     }
 
     async getClosestList(listName, lists) {
+        if(!lists) {
+            lists = await this.getLists();
+        }
         var listNames = [];
         let bestMatch = null;
         let bestMatchId = null
@@ -104,7 +107,7 @@ class Trello {
                 path: `/1/lists/${lists[list].id}/cards?key=${process.env.trello_key}&token=${process.env.trello_token}`,
             }
             const cards = await this.getCards(options);
-            console.log(cards);
+
             for(var card in cards) {
                 const distance = this.levenshteinDistance(cardName, cards[card].cardName);
                 if (distance < bestDistance) {
@@ -114,8 +117,6 @@ class Trello {
                 }
             };
         }
-        console.log("****");
-        console.log(bestDistance);
         if(bestDistance < 3) {
             const cardInfo = [bestMatch, bestMatchId];
             return cardInfo;
@@ -146,6 +147,31 @@ class Trello {
             return 500;
         }
         
+    }
+
+    async addCommentToCard(cardInfo, comment) {
+        const options = {
+            method: "POST",
+            port: 443,
+            hostname: "api.trello.com",
+            path: `/1/cards/${cardInfo.cardId}/actions/comments?key=${process.env.trello_key}&token=${process.env.trello_token}`,
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }
+
+        const data = {
+            comment: comment
+        }
+
+        const apiCaller = new APICaller();
+        try {
+            await apiCaller.makeApiCall(options, JSON.stringify(data));
+            return 200;
+        } catch (error) {
+            console.log(error);
+            return 500;
+        }
     }
 
     levenshteinDistance(a="", b="") {
