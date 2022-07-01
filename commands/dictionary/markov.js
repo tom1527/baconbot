@@ -69,31 +69,36 @@ async function create() {
         .addIntegerOption(option =>
             option
             .setName('minscore')
-            .setDescription('The minimum score a result can have.'))
+            .setDescription('The minimum score a result can have. Default: 100'))
         .addIntegerOption(option =>
             option
             .setName('minwords')
-            .setDescription('Minimum words in a string'))
+            .setDescription('Minimum words in a string. Default: 15'))
         .addIntegerOption(option =>
             option
             .setName('maxwords')
-            .setDescription('Maximum words in a string'))
+            .setDescription('Maximum words in a string. Default: 10'))
         .addIntegerOption(option =>
             option
             .setName('maxtries')
-            .setDescription('Number of tries (limit to prevent crashing)'))
+            .setDescription('Number of tries (limit to prevent crashing). Default: 100000'))
         .addIntegerOption(option =>
             option
             .setName('resscore')
-            .setDescription('The amount of score to filter the result by'))
+            .setDescription('The amount of score to filter the result by. Default: 100'))
         .addIntegerOption(option =>
             option
             .setName('resrefs')
-            .setDescription('The number of messages used to build the string'))
+            .setDescription('The number of messages used to build the string. Default: 10'))
         .addIntegerOption(option =>
             option
             .setName('statesize')
-            .setDescription('The number of words for each link'))
+            .setDescription('The number of words for each link. Default: 1')
+            .addChoices(
+				{ name: '1', value: 1},
+				{ name: '2', value: 2 },
+				{ name: '3', value: 3 },
+            ));
     const command = {
         data: data,
         execute: execute
