@@ -7,24 +7,22 @@ import { CommandInteractionOptionResolver, Message, MessageActionRow, MessageEmb
 // const { Modal } = require('discord.js');
 
 let filePath = "./msg.txt";
+
 let sourceText = fs.readFileSync(filePath, 'utf8');
-
 let msgs = sourceText.split('\n');
-
 if(msgs[0] == '' || msgs[0] == '\n') {
     msgs.shift();
 }
+
+//let msgs = fs.readFileSync("./kinglear.txt", 'utf8').split('\n');
 
 async function execute(interaction) {
     let minScore, minWords, maxWords, maxTries, resScore, resRefs, stateSize;
     if (interaction.options && interaction.options.data.length){    
         minScore = interaction.options.getInteger('minscore');
         minWords = interaction.options.getInteger('minwords');
-        maxWords = interaction.options.getInteger('maxwords');
-        maxTries = interaction.options.getInteger('maxtries');
         resScore = interaction.options.getInteger('resscore');
         resRefs = interaction.options.getInteger('resrefs');
-        stateSize = interaction.options.getInteger('statesize');
         /* if(interaction.replied === false) {
             await interaction.reply({content : "Error - at least one flag must be true if specified.", ephemeral: true});
         } */
@@ -79,29 +77,12 @@ async function create() {
             .setDescription('Minimum words in a string. Default: 10'))
         .addIntegerOption(option =>
             option
-            .setName('maxwords')
-            .setDescription('Maximum words in a string. Default: 15'))
-        .addIntegerOption(option =>
-            option
-            .setName('maxtries')
-            .setDescription('Number of tries (limit to prevent crashing). Default: 100000'))
-        .addIntegerOption(option =>
-            option
             .setName('resscore')
             .setDescription('The amount of score to filter the result by. Default: 100'))
         .addIntegerOption(option =>
             option
             .setName('resrefs')
-            .setDescription('The number of messages used to build the string. Default: 10'))
-        .addIntegerOption(option =>
-            option
-            .setName('statesize')
-            .setDescription('The number of words for each link. Default: 1')
-            .addChoices(
-				{ name: '1', value: 1},
-				{ name: '2', value: 2 },
-				{ name: '3', value: 3 },
-            ));
+            .setDescription('The number of messages used to build the string. Default: 10'));
     const command = {
         data: data,
         execute: execute
