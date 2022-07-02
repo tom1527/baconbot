@@ -43,7 +43,7 @@ async function execute(interaction) {
         maxTries: maxTries ? maxTries : 100000, 
         filter: res => { return (res.score >= scoreFilter) && (_.size(res.refs) >= refsFilter && res.string.split(" ").length >= minWordsOption && res.string.split(" ").length <= maxWordsOption);}}; // Properties of markov chain // This is how to check length: && res.string.split(" ").length >= minWords && res.string.split(" ").length <= maxWords
         
-    const markov = new Markov.default({stateSize: stateSize ? stateSize : 1});
+    const markov = new Markov({stateSize: stateSize ? stateSize : 1});
     markov.addData(msgs);
 
     // markov.buildCorpus();
