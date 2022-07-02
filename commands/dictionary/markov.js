@@ -51,7 +51,9 @@ async function execute(interaction) {
         result = markov.generate(options);
     } catch (error) {
         console.log(error);
-        await interaction.editReply({ content: error.message, ephemeral: true });
+        await interaction.deleteReply();
+        await interaction.followUp({ content: error.message, ephemeral: true });
+        // await interaction.editReply({ content: error.message, ephemeral: true });
         return
     }
     
