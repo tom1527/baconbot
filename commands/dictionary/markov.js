@@ -37,8 +37,8 @@ async function execute(interaction) {
 
     const options = {
         minScore: minScore ? minScore : 100, 
-        minWords: minWords ? minWords : 15, 
-        maxWords: maxWords ? maxWords : 10, 
+        minWords: minWords ? minWords : 10, 
+        maxWords: maxWords ? maxWords : 15, 
         maxTries: maxTries ? maxTries : 100000, 
         filter: res => { return (res.score >= scoreFilter) && (_.size(res.refs) >= refsFilter);}}; // Properties of markov chain
         
@@ -75,11 +75,11 @@ async function create() {
         .addIntegerOption(option =>
             option
             .setName('minwords')
-            .setDescription('Minimum words in a string. Default: 15'))
+            .setDescription('Minimum words in a string. Default: 10'))
         .addIntegerOption(option =>
             option
             .setName('maxwords')
-            .setDescription('Maximum words in a string. Default: 10'))
+            .setDescription('Maximum words in a string. Default: 15'))
         .addIntegerOption(option =>
             option
             .setName('maxtries')
