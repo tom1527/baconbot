@@ -76,6 +76,13 @@ jobs:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
           command: sudo chmod -R 777 /usr/local/bin/baconbot2
+          
+      - name: Redeploy commands
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: 'opc@${{ secrets.SSH_HOST }}'
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+          command: cd /usr/local/bin/baconbot2 && sudo node deploy-commands.js
 
       - name: Restart baconbot.service
         uses: JimCronqvist/action-ssh@master
