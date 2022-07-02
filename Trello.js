@@ -117,7 +117,7 @@ class Trello {
                 }
             };
         }
-        if(bestDistance < 3) {
+        if(bestDistance < 6) {
             const cardInfo = [bestMatch, bestMatchId];
             return cardInfo;
         } else {
