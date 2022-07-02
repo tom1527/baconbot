@@ -40,7 +40,7 @@ async function execute(interaction) {
         minWords: minWords ? minWords : 10, 
         maxWords: maxWords ? maxWords : 15, 
         maxTries: maxTries ? maxTries : 100000, 
-        filter: res => { return (res.score >= scoreFilter) && (_.size(res.refs) >= refsFilter) && res.string.split(" ").length >= minWords && res.string.split(" ").length <= maxWords;}}; // Properties of markov chain
+        filter: res => { return (res.score >= scoreFilter) && (_.size(res.refs) >= refsFilter);}}; // Properties of markov chain // This is how to check length: && res.string.split(" ").length >= minWords && res.string.split(" ").length <= maxWords
         
     const markov = new Markov.default({stateSize: stateSize ? stateSize : 1});
     markov.addData(msgs);
