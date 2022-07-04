@@ -21,7 +21,6 @@ async function execute(interaction) {
     if (interaction.options && interaction.options.data.length){    
         minScore = interaction.options.getInteger('minscore');
         minWords = interaction.options.getInteger('minwords');
-        resScore = interaction.options.getInteger('resscore');
         resRefs = interaction.options.getInteger('resrefs');
         /* if(interaction.replied === false) {
             await interaction.reply({content : "Error - at least one flag must be true if specified.", ephemeral: true});
@@ -30,16 +29,17 @@ async function execute(interaction) {
     
     await interaction.deferReply();
 
-    const scoreFilter = resScore ? resScore : 100;
     const refsFilter = resRefs ? resRefs : 10
      
     const minWordsOption = minWords ? minWords : 10;
     const maxWordsOption = maxWords ? maxWords : 15; 
 
+    const minScoreOption = minScore ? minScore : 100;
+
     const options = {
-        minScore: minScore ? minScore : 100,
+        minScore: minScoreOption,
         maxTries: maxTries ? maxTries : 100000, 
-        filter: res => { return (res.score >= scoreFilter) && (_.size(res.refs) >= refsFilter && res.string.split(" ").length >= minWordsOption && res.string.split(" ").length <= maxWordsOption);}}; // Properties of markov chain // This is how to check length: && res.string.split(" ").length >= minWords && res.string.split(" ").length <= maxWords
+        filter: res => { return (res.score >= minScoreOption) && (_.size(res.refs) >= refsFilter && res.string.split(" ").length >= minWordsOption && res.string.split(" ").length <= maxWordsOption);}}; // Properties of markov chain
         
     const markov = new Markov.default({stateSize: stateSize ? stateSize : 1});
     markov.addData(msgs);
@@ -75,10 +75,6 @@ async function create() {
             option
             .setName('minwords')
             .setDescription('Minimum words in a string. Default: 10'))
-        .addIntegerOption(option =>
-            option
-            .setName('resscore')
-            .setDescription('The amount of score to filter the result by. Default: 100'))
         .addIntegerOption(option =>
             option
             .setName('resrefs')
