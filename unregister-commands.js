@@ -10,6 +10,7 @@ rest.get(Routes.applicationCommands(process.env.APP_ID,  process.env.GUILD_ID))
 		const promises = [];
 		for (const command of data) {
             console.log(command.name);
+            console.log(command.id);
             const deleteUrl = `${Routes.applicationCommands(process.env.APP_ID)}/${command.id}`;
 			promises.push(rest.delete(deleteUrl));
 		}
