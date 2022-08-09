@@ -55,7 +55,7 @@ import * as fs from 'fs';
             // if(messageArray[i][1].member){
                 try {
                     const nameObj = await messageArray[i][1].guild.members.fetch(messageArray[i][1].author);
-                    const name = nameObj.nickname
+                    const name = nameObj.nickname ? nameObj.nickname : nameObj.user.username;
                     const avatarURL = nameObj.user.avatarURL();
                     if(messageArray[i][1].author.bot != true && messageArray[i][1].attachments.size == 0){
                         await objectArray.push({
@@ -67,6 +67,7 @@ import * as fs from 'fs';
                                 name: name,
                                 avatar: avatarURL
                             },
+                            date: messageArray[i][1].createdAt,
                             attach: ""
                         });
                     }
@@ -80,6 +81,7 @@ import * as fs from 'fs';
                                 name: messageArray[i][1].member.nickname,
                                 avatar: messageArray[i][1].author.avatarURL
                             },
+                            date: messageArray[i][1].createdAt,
                             attach: ""
                         });
                     }
@@ -93,6 +95,7 @@ import * as fs from 'fs';
                                 name: messageArray[i][1].member.nickname,
                                 avatar: messageArray[i][1].author.avatarURL
                             },
+                            date: messageArray[i][1].createdAt,
                             attach: messageArray[i][1].attachments.first().url
                         });
                     }
@@ -106,6 +109,7 @@ import * as fs from 'fs';
                                 name: messageArray[i][1].member.nickname,
                                 avatar: messageArray[i][1].author.avatarURL
                             },
+                            date: messageArray[i][1].createdAt,
                             attach: messageArray[i][1].attachments.first().url
                         });
                     }
