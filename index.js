@@ -47,6 +47,10 @@ client.on('messageCreate', (message) => {
 	if(message.channel.id != "694914362095304771") { // blacklist code channel from collecting source data for !markov command
 		msg.appendMessage(message);
 	}
+	if(message.content.substring(0, 1) == '!' && message.content.indexOf(' ', 1) == -1) {
+		var name = message.author.id;
+		message.channel.send(`@everyone <@${name}> is a fucking idiot`);
+	}
 });
 
 let currentChannelID;
