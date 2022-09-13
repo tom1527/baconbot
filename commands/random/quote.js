@@ -20,12 +20,16 @@ const execute = async function execute(interaction) {
         let pins = await parsePins(interaction.guild_id);
         var randMessage = pins[Math.floor(Math.random() * pins.length)];
         let date = new Date(randMessage.date).toDateString()
-        date = date.substring(4, date.length)
-        date = date.substring(0, date.lastIndexOf(" ")) + "," + date.substring(date.lastIndexOf(" "), date.length); // Format date to Mmm DD, YYYY
+        if(isNaN(date)) {
+            date = date.substring(4, date.length)
+            date = date.substring(0, date.lastIndexOf(" ")) + "," + date.substring(date.lastIndexOf(" "), date.length); // Format date to Mmm DD, YYYY
+        } else {
+            date = null;
+        }
         const data = {
             color: 0x139efb, // Lightish blue bar down the side
             author: {
-                name: randMessage.user.name + " - " + date, // Nickname of the author of the pinned message and date
+                name: randMessage.user.name + (date ? ` - ${date}` : null), // Nickname of the author of the pinned message and date
                 icon_url: randMessage.user.avatar // Avatar of the author of the pinned message
             },
             // If message has been deleted but pins haven't been reloaded, default behaviour is to jump anyway to the location of where the message was.
@@ -62,6 +66,10 @@ async function parsePins(){
             resolve (JSON.parse(data));
         });
     });
+}
+
+async function addAdditionalQuoteOptions(data) {
+    
 }
 
 async function create() {
