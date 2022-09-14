@@ -39,6 +39,42 @@ import * as fs from 'fs';
                 const permissions = i[1].permissionsFor(guild.me)
                 if(i[1].permissionsFor(guild.me).has('VIEW_CHANNEL')){
                     channelMessages = await i[1].messages.fetchPinned();
+                    var channelPins = Array.from(channelMessages);
+                    if(channelPins.length > 44 && channelPins.length != 50) {
+
+                        var lastPinId = channelPins[0][1].id;
+                        var systemPinMessage = await i[1].messages.fetch({limit: 100}).then(messages => {
+                            var lastMessagesArray = Array.from(messages);
+                            for(var message of lastMessagesArray) {
+                                if(message[1].reference && message[1].reference.messageId == lastPinId) {
+                                   return message[1];
+                                }
+                            }
+                        });
+                        
+                        if(systemPinMessage) {
+                            // systemPinMessage[1].client.emojis/find(emoji => emoji.name == reaction)
+                            var reaction = ""
+                            switch (50 - channelPins.length) {
+                                case 1:
+                                    reaction = "1⃣📌";
+                                    break;
+                                case 2:
+                                    reaction = "2⃣";
+                                    break;
+                                case 3:
+                                    reaction = "3⃣";
+                                    break;
+                                case 4:
+                                    reaction = "4⃣";
+                                    break;
+                                case 5:
+                                    reaction = "5⃣";
+                            }
+                            const reactionsArray = [reaction, '📌', '🇱', '🇪', '🇫', '🇹']
+                            reactionsArray.forEach(element => systemPinMessage.react(element));
+                        }
+                    }
                     messageCollection = await messageCollection.concat(channelMessages);
                     console.log(i[1].name + " channel found!");
                 }else{
@@ -76,7 +112,7 @@ import * as fs from 'fs';
                             id: messageArray[i][1].id,
                             channelID: messageArray[i][1].channel.id,
                             guildID: messageArray[i][1].guild.id,
-                            content: messageArray[i][1].embeds[0].description,
+                            ...(messageArray[i][1].embeds[0]) && {content:messageArray[i][1].embeds[0].description},
                             user: {
                                 name: messageArray[i][1].member.nickname,
                                 avatar: messageArray[i][1].author.avatarURL
