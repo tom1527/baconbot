@@ -104,7 +104,7 @@ async function addAdditionalQuoteOptions(data) {
     for(var pin of pins) {
         if(!users.includes(pin.user.name)) {
             users.push(pin.user.name);
-            userChoices.push({name: pin.user.name, value: pin.user.name})
+            userChoices.push({name: pin.user.name ? pin.user.name : "Unknown", value: pin.user.name ? pin.user.name : "Unknown"})
         }
     }
 
