@@ -37,7 +37,7 @@ import * as fs from 'fs';
             if(i[1].type == 'GUILD_TEXT'){
                 console.log("Loading " + i[1].name + " channel...");
                 const permissions = i[1].permissionsFor(guild.me)
-                if(i[1].permissionsFor(guild.me).has('VIEW_CHANNEL')){
+                if(i[1].permissionsFor(guild.me).has('VIEW_CHANNEL') && i[1].id != '694914362095304771'){
                     channelMessages = await i[1].messages.fetchPinned();
                     var channelPins = Array.from(channelMessages);
                     if(channelPins.length > 44 && channelPins.length != 50) {
