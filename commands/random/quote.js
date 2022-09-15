@@ -35,6 +35,7 @@ const execute = async function execute(interaction) {
         var randMessage = pins[Math.floor(Math.random() * pins.length)];
         if(!randMessage) {
             interaction.reply("No pins could be found with those parameters.");
+            return;
         }
         let date = new Date(randMessage.date).toDateString()
         if(isNaN(date)) {
