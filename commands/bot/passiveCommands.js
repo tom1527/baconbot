@@ -22,13 +22,17 @@ import * as fs from 'fs';
         return latestChannel;
     }
 
-    const loadPins = async function(channel){
-        
+    const loadPins = async function(guild){
+        if(!guild) {
+            console.log("Error parsing pins: no guild specified");
+            return null;
+        }
+
         let pinsPath = "./pins.json";
         
         let channelMessages = new Discord.Collection();
         let messageCollection = new Discord.Collection();
-        let guild = channel.guild;
+        
         let messageArray = new Array();
         let objectArray = new Array();
         
