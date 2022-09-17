@@ -2,7 +2,7 @@
 import *  as fs from 'fs';
 import * as path from 'path';
 import 'dotenv/config';
-import {Client, Collection, Intents} from 'discord.js';
+import {Client, Collection, Intents } from 'discord.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import * as passiveCommands from './commands/bot/passiveCommands.js';
@@ -10,8 +10,10 @@ import * as msg from './commands/bot/msg.js';
 import Glob from 'glob'
 import webhook from './webhook.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v10';
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS,] });
 
 const guildID = process.env.GUILD_ID;
 client.commands = new Collection();
@@ -61,8 +63,55 @@ client.on('ready', async function(client){
 
 client.on('channelPinsUpdate', async function(channel, time){
     currentChannelID = channel.id;
-    await passiveCommands.loadPins(channel);
+    await passiveCommands.loadPins(channel.guild);
 });
+
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+	// Compare nickname as 'guildMemberUpdate' is triggered by any changes to user
+	// Todo: investigate why this only seems to trigger on the second change
+	if(newMember.nickname && oldMember.nickname !== newMember.nickname) {
+		const quoteCommand = client.commands.get('quote');
+
+		for(var option of quoteCommand.data.options) {
+			if(option.name == 'user') {
+				/* for(var name of option.choices) {
+					if(name.value == oldMember.nickname) {
+						name.value = newMember.nickname;
+					}
+				} */
+				const members = newMember.guild.members.cache;
+				// Reset choices for user option - can't compare nicknames as they may be out of sync
+				// so it is better to start from scratch
+				option.choices.length = 0;
+				for(var member of members) {
+					option.choices.push(
+						{name: member[1].displayName, value: member[1].displayName}
+					);
+				}
+			}
+		}
+
+		await passiveCommands.loadPins(newMember.guild);
+
+		const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
+		// rest.put(Routes.applicationCommands())
+
+		const commands = rest.get(Routes.applicationCommands(process.env.APP_ID))
+		.then(data => {
+			const promises = [];
+			for (const command of data) {
+				console.log(command.name);
+				console.log(command.id);
+				if(command.name == 'quote') {
+					promises.push(rest.patch(Routes.applicationCommand(process.env.APP_ID, command.id), { body: quoteCommand.data }));
+				}
+			}
+			return Promise.all(promises).then(console.log(`Patching quote command...`));
+		})
+		.catch(console.error);
+
+	}
+}).then()
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.isModalSubmit()) {

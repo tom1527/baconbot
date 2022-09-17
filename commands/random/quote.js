@@ -13,7 +13,7 @@ const execute = async function execute(interaction) {
 
     if (parseOption && parseOption.value == true) {
         await interaction.deferReply();
-        const statusCode = await passiveCommands.loadPins(interaction.channel);
+        const statusCode = await passiveCommands.loadPins(interaction.guild);
         console.log(statusCode);
         if (statusCode === 200) {
             await interaction.editReply('Pins loaded!');
