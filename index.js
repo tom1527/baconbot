@@ -74,11 +74,6 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 
 		for(var option of quoteCommand.data.options) {
 			if(option.name == 'user') {
-				/* for(var name of option.choices) {
-					if(name.value == oldMember.nickname) {
-						name.value = newMember.nickname;
-					}
-				} */
 				const members = newMember.guild.members.cache;
 				// Reset choices for user option - can't compare nicknames as they may be out of sync
 				// so it is better to start from scratch
@@ -111,7 +106,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 		.catch(console.error);
 
 	}
-}).then()
+})
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.isModalSubmit()) {
