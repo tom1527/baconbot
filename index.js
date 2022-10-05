@@ -13,7 +13,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS,] });
+
+const myIntents = new Intents();
+myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES);
+
+const client = new Client({ intents: myIntents });
 
 const guildID = process.env.GUILD_ID;
 client.commands = new Collection();
@@ -26,7 +30,7 @@ for (const file of commandFiles) {
 	}
 	var command = await import(`./${file}`);
 	try {
-		command = await command.create();
+		command = await command.create(client);
 	} catch (error) {
 		console.log(error);
 	}
