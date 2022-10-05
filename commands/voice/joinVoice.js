@@ -42,6 +42,13 @@ async function execute(interaction) {
 
         player.on(AudioPlayerStatus.Idle, () => {
             connection.disconnect()
+            console.log(connection.state)
+            try {
+                connection.destroy();
+            } catch (error) {
+                console.log(error);
+            }
+            audioPlayers.delete(interaction.guildId)
             console.log("done");
         })
 
