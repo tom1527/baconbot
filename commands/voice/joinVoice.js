@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { joinVoiceChannel, createAudioPlayer, AudioResource, createAudioResource, StreamType, getVoiceConnection, generateDependencyReport, entersState, VoiceConnectionStatus, AudioPlayerStatus, EndBehaviorType  } from '@discordjs/voice';
-import { Interaction, MessageAttachment } from 'discord.js';
+import { Interaction, MessageAttachment, MessageEmbed } from 'discord.js';
 import 'dotenv/config';
 import *  as fs from 'fs';
 import prism, { ogg } from 'prism-media';
