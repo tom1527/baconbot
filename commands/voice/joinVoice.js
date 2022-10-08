@@ -17,7 +17,7 @@ async function execute(interaction) {
     let transcribeOption = interaction.options.get('transcribe');
 
     if (!interaction.member.voice.channel && !transcribeOption) {
-        interaction.reply({content: 'You need to be in a voice channel you dumbass', ephemeral: false});
+        interaction.reply({content: 'You need to be in a voice channel you dumbass', ephemeral: true});
         return;
     }
     if(!interaction.deferred) await interaction.deferReply();
@@ -27,7 +27,25 @@ async function execute(interaction) {
         const filePath = `./${userId}.mp3`;
         const result = await transcribe(filePath);
         // console.log(result);
-        interaction.editReply({content: `${result.text}`})
+        // interaction.editReply({content: `${result.text}`})
+        const data = {
+            color: 0xffaa33,
+            fields: [
+                {
+                    name: "You probably said:",
+                    value: `${result.text}`
+                }
+            ],
+            footer: {
+                icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
+                text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
+            }
+        }
+        const embed = new MessageEmbed(data);
+        interaction.editReply({
+            embeds: [embed],
+            ephemeral: false,
+          })
         return;
     }
 
@@ -91,7 +109,12 @@ async function execute(interaction) {
             
                 var rawAudioFilePath = `./${userId}.pcm`;
             
-                const out = fs.createWriteStream(rawAudioFilePath, { flags: 'a' });
+                try {
+                    var out = fs.createWriteStream(rawAudioFilePath, { flags: 'a' });
+                } catch (error) {
+                    console.log(error)
+                    return;
+                }
                 console.log(`👂 Started recording ${rawAudioFilePath}`);
             
                 pipeline(opusStream, oggStream, out, (error) => {
@@ -101,12 +124,15 @@ async function execute(interaction) {
                 });
 
                 setTimeout(() => {
+                    if(!rawAudioFilePath) {
+                        return;
+                    }
                     const process = new ffmpeg(rawAudioFilePath);
                     process.then((audio) => {
                         audio.fnExtractSoundToMP3(`./${userId}.mp3`, function (error, file) {
                             if(error) {
                                 console.log(error);
-                            } else {
+                            } 
                                 fs.unlink(`${rawAudioFilePath}`, (error => {
                                     if (error) console.log(error);
                                 }));
@@ -116,6 +142,7 @@ async function execute(interaction) {
                                     fields: [
                                         {
                                             name: "Here's your fucking file.",
+                                            value: "Hope you fucking choke on it."
                                         }
                                     ],
                                     footer: {
@@ -125,12 +152,12 @@ async function execute(interaction) {
                                 }
                                 const embed = new MessageEmbed(data);
                                 interaction.editReply({
-                                    embeds: [embed],
                                     files: [file],
+                                    embeds: [embed],
                                     ephemeral: false,
-                                  })
+                                  });
                                 console.log("file", file);
-                            }
+                            
                         })
                     });
                 }, 5000)
