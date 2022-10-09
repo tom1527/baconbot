@@ -28,25 +28,30 @@ async function execute(interaction) {
         const result = await transcribe(filePath);
         // console.log(result);
         // interaction.editReply({content: `${result.text}`})
-        const data = {
-            color: 0xffaa33,
-            fields: [
-                {
-                    name: "You probably said:",
-                    value: `${result.text}`
+        if(result && result.text) {
+            const data = {
+                color: 0xffaa33,
+                fields: [
+                    {
+                        name: "You probably said:",
+                        value: `${result.text}`
+                    }
+                ],
+                footer: {
+                    icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
+                    text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
                 }
-            ],
-            footer: {
-                icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
-                text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
             }
+            const embed = new MessageEmbed(data);
+            interaction.editReply({
+                embeds: [embed],
+                ephemeral: false,
+              })
+            return;
+        } else {
+            interaction.editReply('Couldn\'t hear shit, try recording something else.');
+            return;
         }
-        const embed = new MessageEmbed(data);
-        interaction.editReply({
-            embeds: [embed],
-            ephemeral: false,
-          })
-        return;
     }
 
     let connection = joinVoiceChannel({
@@ -133,31 +138,34 @@ async function execute(interaction) {
                             if(error) {
                                 console.log(error);
                             } 
-                                fs.unlink(`${rawAudioFilePath}`, (error => {
-                                    if (error) console.log(error);
-                                }));
-                                // interaction.editReply({content: `Now playing: hotcrossbuns.wav`});
-                                const data = {
-                                    color: 0xffaa33,
-                                    fields: [
-                                        {
-                                            name: "Here's your fucking file.",
-                                            value: "Hope you fucking choke on it."
-                                        }
-                                    ],
-                                    footer: {
-                                        icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
-                                        text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
+                            fs.unlink(`${rawAudioFilePath}`, (error => {
+                                if (error) console.log(error);
+                            }));
+                            // interaction.editReply({content: `Now playing: hotcrossbuns.wav`});
+                            const data = {
+                                color: 0xffaa33,
+                                fields: [
+                                    {
+                                        name: "Here's your fucking file.",
+                                        value: "Hope you fucking choke on it."
                                     }
+                                ],
+                                footer: {
+                                    icon_url: interaction.member.guild.me.user.avatarURL ? interaction.member.guild.me.user.avatarURL : "",
+                                    text: interaction.member.guild.me.nickname ? interaction.member.guild.me.nickname : interaction.member.guild.me.displayName
                                 }
+                            }
+                            if(file) {
                                 const embed = new MessageEmbed(data);
                                 interaction.editReply({
                                     files: [file],
                                     embeds: [embed],
                                     ephemeral: false,
-                                  });
+                                });
                                 console.log("file", file);
-                            
+                            } else {
+                                console.log("Something went wrong");
+                            }
                         })
                     });
                 }, 5000)
