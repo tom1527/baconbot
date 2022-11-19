@@ -57,6 +57,36 @@ client.on('messageCreate', (message) => {
 		var name = message.author.id;
 		message.channel.send(`@everyone <@${name}> is a fucking idiot`);
 	}
+	if(message.content == 'scrape me daddy') {
+		let messages = [];
+		let channels = Array.from(client.channels.cache);
+		for (var channel of channels) {
+			if(channel[1].id != "694914362095304771" && channel[1].type == 'GUILD_TEXT') {
+				channel = channel[1];
+			
+				// Create message pointer
+				let message = await channel.messages
+					.fetch({ limit: 1 })
+					.then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
+		
+				while (message) {
+					await channel.messages
+					.fetch({ limit: 100, before: message.id })
+					.then(messagePage => {
+						messagePage.forEach((messageObj) =>  {
+							msg.appendMessage(message);
+						});
+		
+						// Update our message pointer to be last message in page of messages
+						message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
+					})
+				}
+			}
+		}
+
+
+		console.log(messages);  // Print all messages
+	}
 });
 
 let currentChannelID;

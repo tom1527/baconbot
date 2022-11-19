@@ -5,6 +5,7 @@ vendorauth.json
 node_modules
 .env
 pins.json
-msg.txt
-prideandprejudice.txt
-kinglear.txt
+*.txt
+*.wav
+*.mp3
+*.pcm
