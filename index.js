@@ -49,7 +49,7 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
 	if(message.channel.id != "694914362095304771") { // blacklist code channel from collecting source data for !markov command
 		msg.appendMessage(message);
 	}
