@@ -126,7 +126,7 @@ function getMarkovString(markovData, userOptions) {
 
 async function create() {
     const data = new SlashCommandBuilder()
-        .setName('markov2')
+        .setName('markov')
         .setDescription('Generated an interesting message using a markov chain.')
         .addBooleanOption(option =>
             option
