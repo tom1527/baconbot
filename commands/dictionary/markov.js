@@ -4,81 +4,146 @@ import Markov from 'markov-strings'
 import _ from 'lodash';
 import * as fs from 'fs';
 import { CommandInteractionOptionResolver, Message, MessageActionRow, MessageEmbed, MessageSelectMenu, Modal, TextInputComponent } from 'discord.js';
-// const { Modal } = require('discord.js');
-
-let filePath = "./msg.txt";
-
-let sourceText = fs.readFileSync(filePath, 'utf8');
-let msgs = sourceText.split('\n');
-if(msgs[0] == '' || msgs[0] == '\n') {
-    msgs.shift();
-}
-
-//let msgs = fs.readFileSync("./kinglear.txt", 'utf8').split('\n');
 
 async function execute(interaction) {
-    let minScore, minWords, maxWords, maxTries, resScore, resRefs, stateSize;
-    if (interaction.options && interaction.options.data.length){    
-        minScore = interaction.options.getInteger('minscore');
-        minWords = interaction.options.getInteger('minwords');
-        resRefs = interaction.options.getInteger('resrefs');
-        /* if(interaction.replied === false) {
-            await interaction.reply({content : "Error - at least one flag must be true if specified.", ephemeral: true});
-        } */
-    } 
-    
     await interaction.deferReply();
+    let buildcorpus;
+    let wordLimit;
+    let maxTries;
+    let stateSize
+    if (interaction.options && interaction.options.data.length){    
+        buildcorpus = interaction.options.getBoolean('buildcorpus');
+        wordLimit = interaction.options.getInteger('wordlimit');
+        maxTries = interaction.options.getInteger('maxtries')
+        stateSize = interaction.options.getInteger('statesize')
+    }
 
-    const refsFilter = resRefs ? resRefs : 10
-     
-    const minWordsOption = minWords ? minWords : 10;
-    const maxWordsOption = maxWords ? maxWords : 15; 
+    let markovData;
 
-    const minScoreOption = minScore ? minScore : 100;
+    if(buildcorpus) {
+        let sourceText = fs.readFileSync("./msg.txt", 'utf8');
+        markovData = markovChainGenerator(sourceText, stateSize);
+        fs.writeFileSync( "./markovChain.json", JSON.stringify(markovData) )
+    } else {
+        try {
+            markovData = JSON.parse(fs.readFileSync("./markovChain.json", 'utf-8'));
+        } catch (error) {
+            console.log(error);
+            await interaction.editReply("Could not build a corpus! Try running with the build corpus option set to true.");        
+            return;
+        }
+    }
 
-    const options = {
-        minScore: minScoreOption,
-        maxTries: maxTries ? maxTries : 100000, 
-        filter: res => { return (res.score >= minScoreOption) && (_.size(res.refs) >= refsFilter && res.string.split(" ").length >= minWordsOption && res.string.split(" ").length <= maxWordsOption);}}; // Properties of markov chain
-        
-    const markov = new Markov.default({stateSize: stateSize ? stateSize : 1});
-    markov.addData(msgs);
+    const userOptions = {
+        wordLimit: wordLimit ? wordLimit : 10,
+        maxTries: maxTries ? maxTries : 10
+    }
 
-    // markov.buildCorpus();
-    let result;
-    try {
-        result = markov.generate(options);
-    } catch (error) {
-        console.log(error);
-        await interaction.deleteReply();
-        await interaction.followUp({ content: error.message, ephemeral: true });
-        // await interaction.editReply({ content: error.message, ephemeral: true });
-        return
+    let markovString;
+    for ( let i = 0; i < userOptions.maxTries; i++) {
+        markovString = getMarkovString(markovData, userOptions);
+        if(markovString != undefined) {
+            break;
+        }
     }
     
     const embed = new MessageEmbed({
         color: 0x850000, // red
-        description: result.string
+        description: markovString ? markovString : "Failed to generate string"
     });
     await interaction.editReply({embeds: [embed]});
 }
 
+function markovChainGenerator(text, stateSize) {
+    const markovData = {
+        markovChain: {},
+        startWords: [],
+        endWords: []
+    }
+
+    const messagesArray = text.split('\n');
+    messagesArray.forEach(message => {
+        if(stateSize == 2) {
+            const regex = /([^ ]+ [^ ]+)/g;
+            let match;
+            var wordsArray = [];
+
+            for (const match of message.matchAll(regex)) {
+                wordsArray.push(match[0]);
+            }
+
+        } else {
+            var wordsArray = message.split(' ')
+        }
+        if(wordsArray == null || wordsArray.length < 2) {
+            return;
+        }
+        if(!markovData.startWords.includes(wordsArray[0])) {
+            markovData.startWords.push(wordsArray[0]);
+        }
+        if(!markovData.endWords.includes(wordsArray[wordsArray.length -1])) {
+            markovData.endWords.push(wordsArray[wordsArray.length -1])
+        }
+        for (let i = 0; i < wordsArray.length; i++) {
+            // If the word is not already in the markovChain, add it
+            let word = wordsArray[i]
+            if (!markovData.markovChain[word]) {
+                markovData.markovChain[word] = []
+            }
+            if (wordsArray[i + 1]) {
+                markovData.markovChain[word].push(wordsArray[i + 1]);
+            }
+        }
+    })
+
+    return markovData
+}
+
+function getMarkovString(markovData, userOptions) {
+    // const wordLimit = userOptions.wordLimit;
+    const startWord = markovData.startWords[Math.floor(Math.random() * markovData.startWords.length)]
+
+    let word = startWord;
+    let result = '';
+
+    // let word = markovData.markovChain[startWord][Math.floor(Math.random() * markovData.markovChain[startWord].length)]
+    for (let i = 0; i < markovData.endWords.length; i++) {
+        result += word + ' ';
+        if(markovData.endWords.includes(word) && i >= userOptions.wordLimit) {
+            return result;
+        }
+        console.log(word);
+        var newWord = markovData.markovChain[word][Math.floor(Math.random() * markovData.markovChain[word].length)]
+        word = newWord;
+        if(!word || !markovData.markovChain.hasOwnProperty(word)) {
+            break;
+        }
+    }
+
+    console.log(result);
+    return null;
+}
+
 async function create() {
     const data = new SlashCommandBuilder()
-        .setName('markov')
+        .setName('markov2')
         .setDescription('Generated an interesting message using a markov chain.')
+        .addBooleanOption(option =>
+            option
+            .setName('buildcorpus')
+            .setDescription('Builds the source from which we build markov strings'))
+        .addIntegerOption(option => 
+            option
+            .setName('wordlimit')
+            .setDescription('The number of words the sentence should be'))
+        .addIntegerOption(option => 
+            option
+            .setName('maxtries')
+            .setDescription('The number of attempts to make a sentence'))
         .addIntegerOption(option =>
             option
-            .setName('minscore')
-            .setDescription('The minimum score a result can have. Default: 100'))
-        .addIntegerOption(option =>
-            option
-            .setName('minwords')
-            .setDescription('Minimum words in a string. Default: 10'))
-        .addIntegerOption(option =>
-            option
-            .setName('resrefs')
-            .setDescription('The number of messages used to build the string. Default: 10'));
+            .setName('statesize')
+            .setDescription('How frequently a message is split (1 being every word).'));
     const command = {
         data: data,
         execute: execute
