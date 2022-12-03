@@ -34,8 +34,14 @@ async function execute(interaction) {
         }
     }
 
+    if(!stateSize) {
+        const markovChainKeys = Object.keys(markovData.markovChain);
+        const markovChainKeyArray = markovChainKeys[0].split(' ');
+        stateSize = markovChainKeyArray.length;
+    }
+
     const userOptions = {
-        wordLimit: wordLimit ? wordLimit : 10,
+        wordLimit: wordLimit ? wordLimit/stateSize : 10/stateSize,
         maxTries: maxTries ? maxTries : 10
     }
 
