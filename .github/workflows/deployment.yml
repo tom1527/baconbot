@@ -6,7 +6,7 @@ name: deployment
 on:
   push:
     branches:
-    - master
+    - staging
   workflow_dispatch:
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot2 && git pull origin master
+          command: cd /usr/local/bin/porkbot && git pull origin staging
 
 
 
@@ -68,28 +68,28 @@ jobs:
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot2 && sudo npm install
+          command: cd /usr/local/bin/porkbot && sudo npm install
         
       - name: Change dir permissions
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: sudo chmod -R 777 /usr/local/bin/baconbot2
+          command: sudo chmod -R 777 /usr/local/bin/porkbot
           
       - name: Redeploy commands
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot2 && sudo node deploy-commands.js
+          command: cd /usr/local/bin/porkbot && sudo node deploy-commands.js
 
       - name: Restart baconbot.service
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot2 && sudo systemctl restart baconbot2.service
+          command: cd /usr/local/bin/porkbot && sudo systemctl restart porkbot.service
 
       - name: Run restart script
         run: sh ./deploy.sh
