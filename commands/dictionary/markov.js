@@ -41,8 +41,9 @@ async function execute(interaction) {
     }
 
     const userOptions = {
-        wordLimit: wordLimit ? wordLimit/stateSize : 10/stateSize,
-        maxTries: maxTries ? maxTries : 10
+        wordLimit: wordLimit ? wordLimit : 10,
+        maxTries: maxTries ? maxTries : 10,
+        stateSize: stateSize ? stateSize : 2
     }
 
     let markovString;
@@ -67,15 +68,35 @@ function markovChainGenerator(text, stateSize) {
         endWords: []
     }
 
+    const zip = (a, b) => Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
+
     const messagesArray = text.split('\n');
     messagesArray.forEach(message => {
         if(stateSize == 2) {
             const regex = /([^ ]+ [^ ]+)/g;
-            let match;
             var wordsArray = [];
+            let staggeredMessage;
+            let staggeredArray = [];
+            let finalArray = [];
+
+            let matchAll = message.matchAll(regex);
+            if (message.split(" ").length > 2) {
+                staggeredMessage = message.trim().substring(message.indexOf(" ") + 1);
+                for (const match of staggeredMessage.matchAll(regex)) {
+                    staggeredArray.push(match[0]);
+                }
+            }
 
             for (const match of message.matchAll(regex)) {
                 wordsArray.push(match[0]);
+            }
+
+            if (staggeredArray.length) {
+                finalArray = [].concat(...zip(wordsArray, staggeredArray))
+                if (finalArray[finalArray.length -1] == undefined) {
+                    finalArray.pop();
+                }
+                wordsArray = finalArray;
             }
 
         } else {
@@ -114,7 +135,12 @@ function getMarkovString(markovData, userOptions) {
 
     // let word = markovData.markovChain[startWord][Math.floor(Math.random() * markovData.markovChain[startWord].length)]
     for (let i = 0; i < markovData.endWords.length; i++) {
-        result += word + ' ';
+        if (userOptions.stateSize == 2 && i > 0) {
+            let wordS2 = word.substring(word.indexOf(" ") + 1);
+            result += wordS2 + ' ';
+        } else {
+            result += word + ' ';
+        }
         if(markovData.endWords.includes(word) && i >= userOptions.wordLimit) {
             return result;
         }
