@@ -1,12 +1,9 @@
-discordauth.json
-vendorauth.json
 .git/
 .github/
 node_modules
 .env
-pins.json
 *.txt
 *.wav
 *.mp3
 *.pcm
-markovChain.json
+*.json
