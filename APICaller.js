@@ -1,10 +1,6 @@
 import https from 'https'
 class APICaller {
 
-    constructor() {
-
-    }  
-
     async makeApiCall(options, data) {
         return new Promise ((resolve, reject) => {
             const req = https.request(options, res => {
