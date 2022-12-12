@@ -44,11 +44,6 @@ for (const file of commandFiles) {
 	})();
 }
 
-
-client.once('ready', () => {
-	console.log('Ready!');
-});
-
 client.on('messageCreate', async (message) => {
 	if(message.channel.id != "694914362095304771") { // blacklist code channel from collecting source data for !markov command
 		msg.appendMessage(message);
@@ -93,6 +88,7 @@ let currentChannelID;
 client.on('ready', async function(client){
 	const guild = await client.guilds.fetch(guildID);
 	currentChannelID = passiveCommands.getCurrentChannelID(guild, client);
+	console.log('Ready!');
 })
 
 client.on('channelPinsUpdate', async function(channel, time){
