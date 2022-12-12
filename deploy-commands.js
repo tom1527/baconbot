@@ -21,7 +21,7 @@ for (const file of commandFiles) {
 }
 
 if (!process.env.APP_ID || !process.env.GUILD_ID || !process.env.DISCORD_TOKEN) {
-	console.log("Environment variables missing, commands cannot be deployed.);
+	console.log('Environment variables missing, commands cannot be deployed.');
 else {
 	const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 
