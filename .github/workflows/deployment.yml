@@ -33,7 +33,7 @@ jobs:
         with:
           hosts: 'opc@${{ secrets.SSH_HOST }}'
           privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          command: cd /usr/local/bin/baconbot2 && git stash
+          command: cd /usr/local/bin/porkbot && git stash
           
       - name: Deploy code with git
         uses: JimCronqvist/action-ssh@master
