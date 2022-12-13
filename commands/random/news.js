@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import 'discord.js';
 import { MessageEmbed } from 'discord.js';
 import { APICaller } from '../../APICaller.js';
       

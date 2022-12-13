@@ -1,15 +1,10 @@
 #!/usr/bin/env node 
-import *  as fs from 'fs';
-import * as path from 'path';
 import 'dotenv/config';
 import {Client, Collection, Intents } from 'discord.js';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import * as passiveCommands from './commands/bot/passiveCommands.js';
 import * as msg from './commands/bot/msg.js';
 import Glob from 'glob'
 import webhook from './webhook.js';
-const __dirname = dirname(fileURLToPath(import.meta.url));
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 

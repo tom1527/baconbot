@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { GuildMemberManager, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 const execute = async function execute(interaction) {
     let mColl = await interaction.channel.messages.fetch({limit: 2});

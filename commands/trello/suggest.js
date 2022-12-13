@@ -1,11 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { MessageEmbed } from 'discord.js';
-import 'dotenv/config';
 import { APICaller } from '../../APICaller.js';
 import { MessageActionRow, Modal, TextInputComponent } from 'discord.js';
 import { Trello } from '../../Trello.js';
-import https from 'https'
-
 
 async function execute(interaction, client) {
     if(interaction.type != 'MODAL_SUBMIT') {

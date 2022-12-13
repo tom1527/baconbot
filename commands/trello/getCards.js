@@ -1,7 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import 'dotenv/config';
 import { MessageEmbed } from 'discord.js';
-import { APICaller } from '../../APICaller.js';
 import { Trello } from '../../Trello.js';
 
 async function execute(interaction, client) {

@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import * as passiveCommands from '../bot/passiveCommands.js';
 import { MessageEmbed } from 'discord.js';
-import Discord from 'discord.js';
 import * as fs from 'fs';
 
 let filePath = "./pins.json";

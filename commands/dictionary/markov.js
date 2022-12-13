@@ -1,9 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-// const Markov = require('markov-strings').default;
-import Markov from 'markov-strings'
-import _ from 'lodash';
 import * as fs from 'fs';
-import { CommandInteractionOptionResolver, Message, MessageActionRow, MessageEmbed, MessageSelectMenu, Modal, TextInputComponent } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 async function execute(interaction) {
     await interaction.deferReply();
