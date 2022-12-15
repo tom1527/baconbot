@@ -16,6 +16,7 @@ for (const file of commandFiles) {
 		const commandObject = await command.create();
 		commands.push(commandObject.data);
 	} catch (error) {
+		console.log(`Error deploying the {$file} command.`);
 		console.log(error);
 	}
 }
