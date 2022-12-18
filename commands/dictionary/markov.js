@@ -87,8 +87,13 @@ function markovChainGenerator(text, stateSize) {
         if(!markovData.startWords.includes(wordsArray[0])) {
             markovData.startWords.push(wordsArray[0]);
         }
-        if(!markovData.endWords.includes(wordsArray[wordsArray.length -1])) {
+        if(statesize == 1 && !markovData.endWords.includes(wordsArray[wordsArray.length -1])) {
             markovData.endWords.push(wordsArray[wordsArray.length -1])
+        } else if (statesize == 2) {
+            var lastWord = message.split(' ').pop();
+            if (!markovData.endWords.includes(lastWord) {
+                markovData.endWords.push(lastWord);
+            }
         }
         for (let i = 0; i < wordsArray.length; i++) {
             // If the word is not already in the markovChain, add it
