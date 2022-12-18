@@ -18,14 +18,14 @@ async function execute(interaction) {
         stateSize = interaction.options.getInteger('statesize')
     }
 
-    let markovData;
+        let markovData;
 
-    if(buildcorpus) {
-        let sourceText = fs.readFileSync("./msg.txt", 'utf8');
-        markovData = markovChainGenerator(sourceText, stateSize);
-        fs.writeFileSync( "./markovChain.json", JSON.stringify(markovData) )
-    } else {
-        try {
+        if(buildcorpus) {
+            let sourceText = fs.readFileSync("./msg.txt", 'utf8');
+            markovData = markovChainGenerator(sourceText, stateSize);
+            fs.writeFileSync( "./markovChain.json", JSON.stringify(markovData) )
+        } else {
+            try {
             markovData = JSON.parse(fs.readFileSync("./markovChain.json", 'utf-8'));
         } catch (error) {
             console.log(error);
@@ -42,22 +42,23 @@ async function execute(interaction) {
 
     const userOptions = {
         wordLimit: wordLimit ? wordLimit/stateSize : 10/stateSize,
-        maxTries: maxTries ? maxTries : 10
-    }
-
-    let markovString;
-    for ( let i = 0; i < userOptions.maxTries; i++) {
-        markovString = getMarkovString(markovData, userOptions);
-        if(markovString != undefined) {
-            break;
+            maxTries: maxTries ? maxTries : 1000,
+            stateSize: stateSize ? stateSize : 2
         }
-    }
     
-    const embed = new MessageEmbed({
-        color: 0x850000, // red
-        description: markovString ? markovString : "Failed to generate string"
-    });
-    await interaction.editReply({embeds: [embed]});
+        let markovString;
+        for ( let i = 0; i < userOptions.maxTries; i++) {
+            markovString = getMarkovString(markovData, userOptions);
+            if(markovString != undefined) {
+                break;
+            }
+        }
+        
+        const embed = new MessageEmbed({
+            color: 0x850000, // red
+            description: markovString ? markovString : "Failed to generate string"
+        });
+        await interaction.editReply({embeds: [embed]});   
 }
 
 function markovChainGenerator(text, stateSize) {
