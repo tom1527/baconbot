@@ -69,7 +69,8 @@ client.on('messageCreate', async (message) => {
 					.fetch({ limit: 100, before: message.id })
 					.then(messagePage => {
 						messagePage.forEach((messageObj) =>  {
-							msg.appendMessage(message);
+							messages.push(messageObj);
+							msg.appendMessage(messageObj);
 						});
 		
 						// Update our message pointer to be last message in page of messages
