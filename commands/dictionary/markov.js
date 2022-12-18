@@ -67,7 +67,7 @@ function markovChainGenerator(text, stateSize) {
         startWords: [],
         endWords: []
     }
-
+    text = text.replace(/[\r]/g, ' ').trim();
     const messagesArray = text.split('\n');
     messagesArray.forEach(message => {
         if(stateSize == 2) {
