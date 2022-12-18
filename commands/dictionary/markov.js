@@ -87,9 +87,9 @@ function markovChainGenerator(text, stateSize) {
         if(!markovData.startWords.includes(wordsArray[0])) {
             markovData.startWords.push(wordsArray[0]);
         }
-        if(statesize == 1 && !markovData.endWords.includes(wordsArray[wordsArray.length -1])) {
+        if(stateSize == 1 && !markovData.endWords.includes(wordsArray[wordsArray.length -1])) {
             markovData.endWords.push(wordsArray[wordsArray.length -1])
-        } else if (statesize == 2) {
+        } else if (stateSize == 2) {
             var lastWord = message.split(' ').pop();
             if (!markovData.endWords.includes(lastWord)) {
                 markovData.endWords.push(lastWord);
