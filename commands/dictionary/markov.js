@@ -121,7 +121,9 @@ function getMarkovString(markovData, userOptions) {
     // let word = markovData.markovChain[startWord][Math.floor(Math.random() * markovData.markovChain[startWord].length)]
     for (let i = 0; i < markovData.endWords.length; i++) {
         result += word + ' ';
-        if(markovData.endWords.includes(word) && i >= userOptions.wordLimit) {
+        if(userOptions.stateSize == 1 && markovData.endWords.includes(word) && i >= userOptions.wordLimit) {
+            return result;
+        } else if (userOptions.stateSize == 2 && markovData.endWords.includes(word.split(' ').pop()) && i >= userOptions.wordLimit) {
             return result;
         }
         console.log(word);
