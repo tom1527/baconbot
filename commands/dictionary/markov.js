@@ -91,7 +91,7 @@ function markovChainGenerator(text, stateSize) {
             markovData.endWords.push(wordsArray[wordsArray.length -1])
         } else if (statesize == 2) {
             var lastWord = message.split(' ').pop();
-            if (!markovData.endWords.includes(lastWord) {
+            if (!markovData.endWords.includes(lastWord)) {
                 markovData.endWords.push(lastWord);
             }
         }
