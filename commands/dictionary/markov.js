@@ -22,15 +22,16 @@ async function execute(interaction) {
 
     stateSize ? stateSize : stateSize = 2
 
-        let markovData;
+    let markovData;
 
-        if(buildcorpus) {
-            let sourceText = fs.readFileSync("./msg.txt", 'utf8');
-            markovData = markovChainGenerator(sourceText, stateSize);
-            fs.writeFileSync( "./markovChain.json", JSON.stringify(markovData) )
-        } else {
-            try {
-            markovData = JSON.parse(fs.readFileSync("./markovChain.json", 'utf-8'));
+    if (buildcorpus) {
+        let sourceText = fs.readFileSync(`./commands/dictionary/corpora/${corpus ? corpus.substring(0, corpus.indexOf('.txt')) : 'msg'}.txt`, 'utf8');
+        markovData = markovChainGenerator(sourceText, stateSize);
+        fs.writeFileSync(`./commands/dictionary/markov_chains/${corpus ? corpus.substring(0, corpus.indexOf('.txt')) : 'msg'}_markovChain.json`, JSON.stringify(markovData) )
+    } else {
+        try {
+            // We might end up needing multiple chains for each corpus
+            markovData = JSON.parse(fs.readFileSync(`./commands/dictionary/markov_chains/${corpus ? corpus.substring(0, corpus.indexOf('.txt')) : 'msg'}_markovChain.json`, 'utf-8'));
         } catch (error) {
             console.log(error);
             await interaction.editReply("Could not build a corpus! Try running with the build corpus option set to true.");        
@@ -38,31 +39,26 @@ async function execute(interaction) {
         }
     }
 
-    if(!stateSize) {
-        const markovChainKeys = Object.keys(markovData.markovChain);
-        const markovChainKeyArray = markovChainKeys[0].split(' ');
-        stateSize = markovChainKeyArray.length;
-    }
-
     const userOptions = {
         wordLimit: wordLimit ? wordLimit/stateSize : 10/stateSize,
-            maxTries: maxTries ? maxTries : 1000,
-            stateSize: stateSize ? stateSize : 2
+        maxTries: maxTries ? maxTries : 1000,
+        stateSize: stateSize ? stateSize : 2
+    }
+
+    let markovString;
+    for ( let i = 0; i < userOptions.maxTries; i++) {
+        markovString = getMarkovString(markovData, userOptions);
+        if(markovString != undefined) {
+            break;
         }
+    }
     
-        let markovString;
-        for ( let i = 0; i < userOptions.maxTries; i++) {
-            markovString = getMarkovString(markovData, userOptions);
-            if(markovString != undefined) {
-                break;
-            }
-        }
-        
-        const embed = new MessageEmbed({
-            color: 0x850000, // red
-            description: markovString ? markovString : "Failed to generate string"
-        });
-        await interaction.editReply({embeds: [embed]});   
+    const embed = new MessageEmbed({
+        color: 0x850000, // red
+        description: markovString ? markovString : "Failed to generate string"
+    });
+
+    await interaction.editReply({embeds: [embed]});   
 }
 
 function markovChainGenerator(text, stateSize) {
@@ -78,7 +74,6 @@ function markovChainGenerator(text, stateSize) {
             const regex = /([^ ]+ [^ ]+)/g;
             let match;
             var wordsArray = [];
-
             for (const match of message.matchAll(regex)) {
                 wordsArray.push(match[0]);
             }
