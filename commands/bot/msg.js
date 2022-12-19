@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-let filePath = "./msg.txt";
+let filePath = "./commands/dictionary/corpora/msg.txt";
 let sourceText = fs.readFileSync(filePath, 'utf8');
 let fileStats = fs.statSync(filePath);
 
