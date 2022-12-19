@@ -8,14 +8,16 @@ import { CommandInteractionOptionResolver, Message, MessageActionRow, MessageEmb
 async function execute(interaction) {
     await interaction.deferReply();
     let buildcorpus;
+    let corpus;
     let wordLimit;
     let maxTries;
     let stateSize
     if (interaction.options && interaction.options.data.length){    
         buildcorpus = interaction.options.getBoolean('buildcorpus');
+        corpus = interaction.options.getString('corpus');
         wordLimit = interaction.options.getInteger('wordlimit');
-        maxTries = interaction.options.getInteger('maxtries')
-        stateSize = interaction.options.getInteger('statesize')
+        maxTries = interaction.options.getInteger('maxtries');
+        stateSize = interaction.options.getInteger('statesize');
     }
 
         let markovData;
@@ -138,8 +140,30 @@ function getMarkovString(markovData, userOptions) {
     return null;
 }
 
+async function addCorporaOptions(data) {
+    const files = fs.readdirSync('./commands/dictionary/corpora');
+    const options = [];
+    
+    files.forEach((file) => {
+        options.push(
+            {
+                name: file.substring(0, file.indexOf('.txt')),
+                value: file
+            }
+        )
+    })
+
+    data.addStringOption(option => 
+        option.setName('corpus')
+        .setDescription('Which corpus to build the string from (can be used this build corpus to rebuild a corpus)')
+        .addChoices(
+            ...options)
+        )
+    return data;
+}
+
 async function create() {
-    const data = new SlashCommandBuilder()
+    var data = new SlashCommandBuilder()
         .setName('markov')
         .setDescription('Generated an interesting message using a markov chain.')
         .addBooleanOption(option =>
@@ -158,6 +182,7 @@ async function create() {
             option
             .setName('statesize')
             .setDescription('How frequently a message is split (1 being every word).'));
+    data = await addCorporaOptions(data);
     const command = {
         data: data,
         execute: execute
