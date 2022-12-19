@@ -20,6 +20,8 @@ async function execute(interaction) {
         stateSize = interaction.options.getInteger('statesize');
     }
 
+    stateSize ? stateSize : stateSize = 2
+
         let markovData;
 
         if(buildcorpus) {
