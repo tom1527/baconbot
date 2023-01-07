@@ -79,7 +79,7 @@ function markovChainGenerator(text, stateSize) {
             }
 
         } else {
-            var wordsArray = message.split(' ')
+            var wordsArray = message.trim().split(' ')
         }
         if(wordsArray == null || wordsArray.length < 2) {
             return;
