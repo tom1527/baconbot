@@ -8,7 +8,10 @@ const execute = async function execute(interaction) {
     const options = {
         method: 'GET',
         hostname: 'www.reddit.com',
-        path: '/r/floridaman.json?limit=100&raw_json=1'
+        path: '/r/floridaman.json?limit=100&raw_json=1',
+        headers: {
+            'User-Agent': 'Mozilla/5.0'
+        }
     }
 
     const apiCaller = new APICaller();
