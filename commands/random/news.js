@@ -11,10 +11,7 @@ const execute = async function execute(interaction) {
         path: '/r/nottheonion.json?limit=100&raw_json=1',
         headers: {
             'User-Agent': 'Mozilla/5.0',
-            auth: {
-                user: process.env.reddit_client_id,
-                pass: process.env.reddit_secret,
-            }
+            'Authorization': `Basic ${Buffer.from(`${process.env.reddit_client_id}:${process.env.reddit_secret}`).toString('base64')}`,
         }
     }
 
