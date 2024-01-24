@@ -37,15 +37,15 @@ async function execute(interaction) {
         fields: [
             {
                 name: "Definition",
-                value: wotdArray.def
+                value: wotdArray.def ? wotdArray.def : "<blank>"
             },
             {
                 name: "Example",
-                value: wotdArray.eg
+                value: wotdArray.eg ? wotdArray.eg : "<blank>"
             },
             {
                 name: "Origin",
-                value: wotdArray.origin
+                value: wotdArray.origin ? wotdArray.origin : "<blank>"
             }
         ]
     }
